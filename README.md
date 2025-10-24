@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 Plataforma web para empresas ou indivíduos avaliarem se os gastos com manutenção de um ativo (máquina) estão justificando a extensão da sua vida útil e o retorno financeiro potencial. Fornece cadastro de ativos, registro detalhado de reparos (peças +tempo reparo), cálculo de ROI por reparo/por ativo, e painéis com gráficos e relatórios para orientar decisões de vender, substituir ou continuar mantendo ativos.
+=======
+# roimaintenence
+>>>>>>> 408828b (Criando Conexao com DB)

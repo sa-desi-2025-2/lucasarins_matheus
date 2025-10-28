@@ -5,7 +5,7 @@
 groups = ["default"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:aceca9a708ef8b443b167a36e920ba726b0eed09e71a58fa904b26377a168480"
+content_hash = "sha256:703633d08bc0bfccd9817c4b64d10614c5a4f1384faaa71969465144028ea34c"
 
 [[metadata.targets]]
 requires_python = ">=3.13"
@@ -26,18 +26,30 @@ files = [
 
 [[package]]
 name = "django"
-version = "5.2.7"
-requires_python = ">=3.10"
+version = "4.1.13"
+requires_python = ">=3.8"
 summary = "A high-level Python web framework that encourages rapid development and clean, pragmatic design."
 groups = ["default"]
 dependencies = [
-    "asgiref>=3.8.1",
-    "sqlparse>=0.3.1",
+    "asgiref<4,>=3.5.2",
+    "backports-zoneinfo; python_version < \"3.9\"",
+    "sqlparse>=0.2.2",
     "tzdata; sys_platform == \"win32\"",
 ]
 files = [
-    {file = "django-5.2.7-py3-none-any.whl", hash = "sha256:59a13a6515f787dec9d97a0438cd2efac78c8aca1c80025244b0fe507fe0754b"},
-    {file = "django-5.2.7.tar.gz", hash = "sha256:e0f6f12e2551b1716a95a63a1366ca91bbcd7be059862c1b18f989b1da356cdd"},
+    {file = "Django-4.1.13-py3-none-any.whl", hash = "sha256:04ab3f6f46d084a0bba5a2c9a93a3a2eb3fe81589512367a75f79ee8acf790ce"},
+    {file = "Django-4.1.13.tar.gz", hash = "sha256:94a3f471e833c8f124ee7a2de11e92f633991d975e3fa5bdd91e8abd66426318"},
+]
+
+[[package]]
+name = "pymysql"
+version = "1.1.2"
+requires_python = ">=3.8"
+summary = "Pure Python MySQL Driver"
+groups = ["default"]
+files = [
+    {file = "pymysql-1.1.2-py3-none-any.whl", hash = "sha256:e6b1d89711dd51f8f74b1631fe08f039e7d76cf67a42a323d3178f0f25762ed9"},
+    {file = "pymysql-1.1.2.tar.gz", hash = "sha256:4961d3e165614ae65014e361811a724e2044ad3ea3739de9903ae7c21f539f03"},
 ]
 
 [[package]]

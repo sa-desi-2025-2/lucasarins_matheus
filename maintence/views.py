@@ -1,3 +1,7 @@
-from django.shortcuts import render
+from rest_framework.viewsets import ModelViewSet
+from maintence.models import Categoriaativos
+from maintence.serializers import CategoriaativosSerializer
 
-# Create your views here.
+class CategoriaativosViewSet(ModelViewSet):
+    queryset = Categoriaativos.objects.all()
+    serializer_class = CategoriaativosSerializer

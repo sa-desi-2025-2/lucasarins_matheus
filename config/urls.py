@@ -7,6 +7,7 @@ from rest_framework.routers import DefaultRouter
 from maintence.views import AtivosViewSet, CategoriaativosViewSet
 
 router = DefaultRouter()
+router.register(r'alertas', AtivosViewSet)
 router.register(r'ativos', AtivosViewSet)
 router.register(r'categoriaativos', CategoriaativosViewSet)
 

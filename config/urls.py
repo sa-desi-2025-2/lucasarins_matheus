@@ -4,9 +4,10 @@ from django.urls import include, path
 
 from rest_framework.routers import DefaultRouter
 
-from maintence.views import CategoriaativosViewSet
+from maintence.views import AtivosViewSet, CategoriaativosViewSet
 
 router = DefaultRouter()
+router.register(r'ativos', AtivosViewSet)
 router.register(r'categoriaativos', CategoriaativosViewSet)
 
 urlpatterns = [

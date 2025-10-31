@@ -3,11 +3,12 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 
-from maintence.models import Alertas, Ativos, Categoriaativos, Usuarios
+from maintence.models import Alertas, Ativos, Categoriaativos, LogAuditorias, Usuarios
 from maintence.serializers import (
     AlertasSerializer,
     AtivosSerializer,
     CategoriaativosSerializer,
+    LogAuditoriasSerializer,
     UsuariosSerializer,
 )
 
@@ -27,6 +28,11 @@ class AtivosViewSet(ModelViewSet):
 class CategoriaativosViewSet(ModelViewSet):
     queryset = Categoriaativos.objects.all()
     serializer_class = CategoriaativosSerializer
+
+class LogAuditoriasViewSet(ModelViewSet):
+    queryset = LogAuditorias.objects.all()
+    serializer_class = LogAuditoriasSerializer
+    
 
 
 class UsuariosViewSet(ModelViewSet):

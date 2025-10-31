@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from maintence.models import Alertas, Ativos, Categoriaativos, Usuarios
+from maintence.models import Alertas, Ativos, Categoriaativos, LogAuditorias, Usuarios
 
 
 class AlertasSerializer(ModelSerializer):
@@ -15,6 +15,13 @@ class CategoriaativosSerializer(ModelSerializer):
     class Meta:
         model = Categoriaativos
         fields = '__all__'
+
+
+class LogAuditoriasSerializer(ModelSerializer):
+    class Meta:
+        model = LogAuditorias
+        fields = '__all__'   
+
 
 
 class UsuariosSerializer(ModelSerializer):

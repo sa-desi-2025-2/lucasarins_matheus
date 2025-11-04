@@ -5,6 +5,7 @@ from maintence.views import (
     AlertasViewSet,
     AtivosViewSet,
     CategoriaativosViewSet,
+    FornecedoresViewSet,
     LogAuditoriasViewSet,
     UsuariosViewSet,
     cadastro,  
@@ -14,6 +15,7 @@ router = DefaultRouter()
 router.register(r'alertas', AlertasViewSet)
 router.register(r'ativos', AtivosViewSet)
 router.register(r'categoriaativos', CategoriaativosViewSet)
+router.register(r'fornecedores', FornecedoresViewSet)
 router.register(r'logauditorias', LogAuditoriasViewSet)
 router.register(r'usuarios', UsuariosViewSet)
 

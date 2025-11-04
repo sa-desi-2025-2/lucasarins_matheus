@@ -6,7 +6,9 @@ from maintence.views import (
     AtivosViewSet,
     CategoriaativosViewSet,
     FornecedoresViewSet,
+    ItensViewSet,
     LogAuditoriasViewSet,
+    ReparosViewSet,
     UsuariosViewSet,
     cadastro,  
 )
@@ -16,7 +18,9 @@ router.register(r'alertas', AlertasViewSet)
 router.register(r'ativos', AtivosViewSet)
 router.register(r'categoriaativos', CategoriaativosViewSet)
 router.register(r'fornecedores', FornecedoresViewSet)
+router.register(r'itens', ItensViewSet)
 router.register(r'logauditorias', LogAuditoriasViewSet)
+router.register(r'reparos', ReparosViewSet)
 router.register(r'usuarios', UsuariosViewSet)
 
 urlpatterns = [

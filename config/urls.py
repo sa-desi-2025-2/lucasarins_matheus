@@ -7,6 +7,7 @@ from maintence.views import (
     CategoriaativosViewSet,
     FornecedoresViewSet,
     ItensViewSet,
+    ItensReparoViewSet,
     LogAuditoriasViewSet,
     ReparosViewSet,
     UsuariosViewSet,
@@ -22,7 +23,7 @@ router.register(r'itens', ItensViewSet)
 router.register(r'logauditorias', LogAuditoriasViewSet)
 router.register(r'reparos', ReparosViewSet)
 router.register(r'usuarios', UsuariosViewSet)
-
+router.register(r'itensreparo', ItensReparoViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),

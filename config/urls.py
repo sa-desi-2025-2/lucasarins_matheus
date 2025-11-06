@@ -13,6 +13,10 @@ from maintence.views import (
     UsuariosViewSet,
     cadastro,  
 )
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 router = DefaultRouter()
 router.register(r'alertas', AlertasViewSet)
@@ -27,5 +31,7 @@ router.register(r'itensreparo', ItensReparoViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
-    path('cadastro/', cadastro, name='cadastro'),  
+    path('cadastro/', cadastro, name='cadastro'),
+    path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
 ]

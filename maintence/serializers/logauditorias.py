@@ -3,7 +3,6 @@ from maintence.models.logauditorias import LogAuditorias
 from maintence.models import ItensReparo
 
 
-
 class LogAuditoriasSerializer(ModelSerializer):
     class Meta:
         model = LogAuditorias

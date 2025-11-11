@@ -34,7 +34,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
     path('cadastro/', cadastro, name='cadastro'),
-    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('dashboard/', dashboard, name='dashboard'),  # ✅ Agora funciona
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'), 
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'), 
+    path('dashboard/', dashboard, name='dashboard'),  
 ]

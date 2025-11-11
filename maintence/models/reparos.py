@@ -16,6 +16,7 @@ class Reparos(models.Model):
     roi_calculado = models.DecimalField(max_digits=10, decimal_places=2)
     custo_total_peca = models.DecimalField(max_digits=12, decimal_places=2)
     anexos = models.CharField(max_length=255, blank=True, null=True)
+    custo_mao_obra = models.DecimalField(max_digits=12, decimal_places=2)
 
     class Meta:
         managed = False

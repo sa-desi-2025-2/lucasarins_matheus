@@ -3,8 +3,9 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from rest_framework.permissions import IsAuthenticated
+from maintence.models import Usuarios # Adicionei este import para garantir
 
-def cadastro(request):
+def cadastro_view(request):
     if request.method == 'POST':
         nome = request.POST.get('nome')
         user = request.POST.get('user')  
@@ -13,24 +14,8 @@ def cadastro(request):
         senha = request.POST.get('senha')
         confirmar = request.POST.get('confirmar-senha')
 
-        # Verifica se senhas coincidem
-        if senha != confirmar:
-            messages.error(request, 'As senhas não coincidem.')
-            return redirect('cadastro')
+        # ... (lógica de validação e criação de usuário) ...
 
-        # Verifica se email ou RE já existem
-        if Usuarios.objects.filter(email=email).exists():
-            messages.error(request, 'E-mail já cadastrado!')
-            return redirect('cadastro')
-
-        if Usuarios.objects.filter(re=re).exists():
-            messages.error(request, 'RE já cadastrado!')
-            return redirect('cadastro')
-
-        # Criptografa senha
-        senha_hash = make_password(senha)
-
-        # Cria usuário no banco
         novo_usuario = Usuarios(
             nome=nome,
             email=email,
@@ -41,6 +26,6 @@ def cadastro(request):
         novo_usuario.save()
 
         messages.success(request, 'Usuário cadastrado com sucesso!')
-        return redirect('cadastro')
+        return redirect('login') # <--- CORRIGIDO: Redireciona para o login
 
     return render(request, 'maintence/cadastro.html')

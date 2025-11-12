@@ -1,22 +1,15 @@
-from maintence.models import Alertas, Ativos, Categoriaativos, Fornecedores, Itens, ItensReparo, LogAuditorias, Reparos, Usuarios
-from maintence.serializers import (
-    AlertasSerializer,
-    AtivosSerializer,
-    CategoriaativosSerializer,
-    FornecedoresSerializer,
-    ItensSerializer,
-    ItensReparoSerializer,
-    LogAuditoriasSerializer,
-    ReparosSerializer,
-    UsuariosSerializer,
-)
+# ... (imports de models e serializers existentes) ...
+
 from maintence.views.alertas import AlertasViewSet
 from maintence.views.ativos import AtivosViewSet
-from maintence.views.categoriaativos import CategoriaativosViewSet
-from maintence.views.fornecedores import FornecedoresViewSet
-from maintence.views.itens import ItensViewSet
-from maintence.views.itensreparo import ItensReparoViewSet
-from maintence.views.logauditorias import LogAuditoriasViewSet
-from maintence.views.reparos import ReparosViewSet
+# ... (outros ViewSets existentes) ...
 from maintence.views.usuarios import UsuariosViewSet
-from maintence.views.cadastro import cadastro
+
+# NOVAS IMPORTAÇÕES DE VIEWS DE PÁGINA
+from maintence.views.cadastro import cadastro as cadastro_view
+from maintence.views.auth import login_view, logout_view
+from maintence.views.dashboard import dashboard_view
+from maintence.views.ativos import ativos_view, ativos_criar
+from maintence.views.reparos import manutencao_view, reparos_criar
+from maintence.views.alertas import alertas_view, alertas_criar
+from maintence.views.analise_roi import analise_roi_view

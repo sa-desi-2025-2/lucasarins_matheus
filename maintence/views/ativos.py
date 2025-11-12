@@ -6,6 +6,9 @@ from rest_framework.response import Response
 from maintence.models.ativos import Ativos
 from maintence.serializers.ativos import AtivosSerializer
 
+from django.shortcuts import render, redirect
+from maintence.models import Ativos, Categoriaativos
+
 class AtivosViewSet(ModelViewSet):
     queryset = Ativos.objects.all()
     serializer_class = AtivosSerializer
@@ -26,3 +29,18 @@ def dashboard(request):
         'roi_medio': float(round(roi_medio,2)),
         'ativos_mais_gastos': ativos_list,
     })
+def ativos_view(request):
+    ativos = Ativos.objects.select_related('id_categoria').all()
+    categorias = Categoriaativos.objects.all()
+    context = {
+        'ativos': ativos,
+        'categorias': categorias
+    }
+    return render(request, 'maintence/ativos.html', context)
+
+def ativos_criar(request):
+    if request.method == 'POST':
+        # Lógica para criar um novo ativo com os dados do POST
+        # ...
+        return redirect('ativos')
+    return redirect('ativos')

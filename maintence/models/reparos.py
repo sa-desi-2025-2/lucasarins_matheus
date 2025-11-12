@@ -12,7 +12,7 @@ class Reparos(models.Model):
     tempo_parada_hora = models.IntegerField()
     extensao_vida_util = models.IntegerField()
     unid_extensao_vida_util = models.CharField(max_length=20)
-    id_usuario = models.ForeignKey('Usuarios', db_column='id_usuario', on_delete=models.CASCADE)
+    id_usuario = models.ForeignKey('Usuarios', db_column='id_usuario', on_delete=models.CASCADE, null=True, blank=True)
     roi_calculado = models.DecimalField(max_digits=10, decimal_places=2)
     custo_total_peca = models.DecimalField(max_digits=12, decimal_places=2)
     anexos = models.CharField(max_length=255, blank=True, null=True)
@@ -44,6 +44,7 @@ class Reparos(models.Model):
             if custo == 0:
                 return None
             roi = (ganho_estimado - custo) / custo
+
 
             return (roi.quantize(Decimal('.01')))
         except Exception:

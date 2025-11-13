@@ -28,3 +28,6 @@ class ReparosSerializer(ModelSerializer):
 
     def get_custo_total(self, obj):
         return obj.custo_total()
+        
+    def get_roi_calculado(self, obj):
+        return obj.calcular_roi()

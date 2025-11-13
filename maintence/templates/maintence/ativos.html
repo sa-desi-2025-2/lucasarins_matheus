@@ -1,237 +1,77 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load static %}
 
-{% block title %}Gestão de Ativos - ROIMANUTENCE{% endblock %}
-
-{% block extra_css %}
-<style>
-    .page-header {
-        margin-bottom: 30px;
-    }
-    
-    .page-title {
-        font-size: 35px;
-        font-weight: 700;
-        color: #000000;
-        margin-bottom: 10px;
-    }
-    
-    .page-subtitle {
-        font-size: 20px;
-        font-weight: 400;
-        color: #000000;
-    }
-    
-    .search-container {
-        background-color: #ffffff;
-        border-radius: 15px;
-        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), inset 0px 4px 4px rgba(0, 0, 0, 0.25);
-        padding: 20px;
-        margin-bottom: 30px;
-    }
-    
-    .search-input-wrapper {
-        position: relative;
-    }
-    
-    .search-icon {
-        position: absolute;
-        left: 20px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 24px;
-        height: 24px;
-    }
-    
-    .search-input {
-        width: 100%;
-        padding: 12px 20px 12px 60px;
-        border: none;
-        border-radius: 15px;
-        background-color: #ffffff;
-        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.61), inset 0px 4px 4px rgba(0, 0, 0, 0.63);
-        font-size: 20px;
-        color: #6D6969;
-    }
-    
-    .search-input:focus {
-        outline: none;
-        color: #000000;
-    }
-    
-    .search-input::placeholder {
-        color: #6D6969;
-    }
-    
-    .ativo-card {
-        background-color: #ffffff;
-        border-radius: 15px;
-        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), inset 0px 4px 4px rgba(0, 0, 0, 0.25);
-        padding: 25px;
-        margin-bottom: 30px;
-        height: 100%;
-        cursor: pointer;
-        transition: transform 0.3s;
-    }
-    
-    .ativo-card:hover {
-        transform: translateY(-5px);
-    }
-    
-    .ativo-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 15px;
-    }
-    
-    .ativo-title {
-        font-size: 20px;
-        font-weight: 700;
-        color: #000000;
-        margin-bottom: 5px;
-    }
-    
-    .ativo-categoria {
-        font-size: 15px;
-        font-weight: 400;
-        color: #868484;
-    }
-    
-    .ativo-info {
-        margin-top: 60px;
-    }
-    
-    .ativo-info-item {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 10px;
-    }
-    
-    .ativo-info-label {
-        font-size: 15px;
-        font-weight: 400;
-        color: #868484;
-    }
-    
-    .ativo-info-value {
-        font-size: 15px;
-        font-weight: 700;
-        color: #000000;
-    }
-    
-    .modal-header-custom {
-        border-bottom: none;
-        padding: 30px 30px 0;
-    }
-    
-    .modal-title-custom {
-        font-size: 25px;
-        font-weight: 700;
-        color: #000000;
-    }
-    
-    .modal-body-custom {
-        padding: 30px;
-    }
-    
-    .btn-save {
-        background-color: #000000;
-        color: #ffffff;
-        border: none;
-        border-radius: 15px;
-        padding: 12px 40px;
-        font-weight: 700;
-        font-size: 18px;
-        transition: all 0.3s;
-    }
-    
-    .btn-save:hover {
-        background-color: #333333;
-    }
-    
-    .btn-cancel {
-        background-color: #868484;
-        color: #ffffff;
-        border: none;
-        border-radius: 15px;
-        padding: 12px 40px;
-        font-weight: 700;
-        font-size: 18px;
-        transition: all 0.3s;
-    }
-    
-    .btn-cancel:hover {
-        background-color: #666666;
-    }
-</style>
-{% endblock %}
+{% block title %}Gestão de Ativos{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row align-items-center page-header">
-        <div class="col-md-8">
-            <h1 class="page-title">Gestão de Ativos</h1>
-            <p class="page-subtitle">Gerencie todos os ativos da empresa e acompanhe seu desempenho</p>
-        </div>
-        <div class="col-md-4 text-end">
-            <button class="btn-primary-custom" data-bs-toggle="modal" data-bs-target="#modalNovoAtivo">
-                +Novo Ativo
-            </button>
-        </div>
-    </div>
-    
-    <!-- Barra de Busca -->
-    <div class="search-container">
-        <div class="search-input-wrapper">
-            <img src="{% static 'img/I21-51;54616-25440.svg' %}" alt="Buscar" class="search-icon">
-            <input type="text" class="search-input" id="searchInput" placeholder="Buscar por nome, categoria ou localização...">
-        </div>
-    </div>
-    
-    <!-- Lista de Ativos -->
-    <div class="row" id="ativosContainer">
-        {% for ativo in ativos %}
-        <div class="col-md-6 col-lg-4 ativo-item" 
-             data-nome="{{ ativo.nome|lower }}" 
-             data-categoria="{{ ativo.id_categoria.nome_categoria|lower }}" 
-             data-localizacao="{{ ativo.localizacao|lower }}">
-            <div class="ativo-card">
-                <div class="ativo-header">
-                    <div>
-                        <div class="ativo-title">{{ ativo.nome }}</div>
-                        <div class="ativo-categoria">{{ ativo.id_categoria.nome_categoria }}</div>
-                    </div>
-                    <span class="badge-active">Ativo</span>
-                </div>
-                
-                <div class="ativo-info">
-                    <div class="ativo-info-item">
-                        <span class="ativo-info-label">Valor Atual:</span>
-                        <span class="ativo-info-value">R${{ ativo.preco|floatformat:2 }}</span>
-                    </div>
-                    <div class="ativo-info-item">
-                        <span class="ativo-info-label">Localização:</span>
-                        <span class="ativo-info-value">{{ ativo.localizacao }}</span>
-                    </div>
-                    <div class="ativo-info-item">
-                        <span class="ativo-info-label">Vida Útil:</span>
-                        <span class="ativo-info-value">{{ ativo.vida_util_esperada }} {{ ativo.unid_vida_util }}</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% empty %}
-        <div class="col-12">
-            <div class="alert alert-info">
-                Nenhum ativo cadastrado ainda. Clique em "+Novo Ativo" para adicionar o primeiro.
-            </div>
-        </div>
-        {% endfor %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">Gestão de Ativos</h1>
     </div>
 </div>
 
-<!-- Modal Novo Ativo -->
+<!-- Barra de Busca e Botão de Novo Ativo -->
+<div class="row mb-4 align-items-center">
+    <div class="col-md-8">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Buscar ativo por nome, ID ou categoria..." aria-label="Buscar ativo" id="searchInput" style="border-radius: 15px 0 0 15px;">
+            <button class="btn btn-primary" type="button" id="search-button" style="border-radius: 0 15px 15px 0;">
+                <!-- CORREÇÃO APLICADA AQUI -->
+                <img src="{% static 'maintence/img/I21-51;54616-25440.svg' %}" alt="Buscar" height="20">
+            </button>
+        </div>
+    </div>
+    <div class="col-md-4 text-end">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNovoAtivo">
+            + Novo Ativo
+        </button>
+    </div>
+</div>
+
+<!-- Tabela de Ativos (Estrutura Simplificada) -->
+<div class="card p-3">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome do Ativo</th>
+                    <th>Categoria</th>
+                    <th>Valor de Compra</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ativo in ativos %}
+                <tr class="ativo-item" data-nome="{{ ativo.nome|lower }}" data-categoria="{{ ativo.categoria.nome|lower }}" data-localizacao="{{ ativo.localizacao|lower }}">
+                    <td>{{ ativo.id }}</td>
+                    <td>{{ ativo.nome }}</td>
+                    <td>{{ ativo.categoria.nome }}</td>
+                    <td>R$ {{ ativo.valor_compra|floatformat:2 }}</td>
+                    <td>
+                        {% if ativo.status == 'Ativo' %}
+                            <span class="badge badge-status-ativo">Ativo</span>
+                        {% else %}
+                            <span class="badge bg-secondary rounded-pill">Inativo</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-secondary">Ver</button>
+                        <button class="btn btn-sm btn-outline-danger">Excluir</button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">Nenhum ativo cadastrado.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Novo Ativo (Seu código original) -->
 <div class="modal fade modal-custom" id="modalNovoAtivo" tabindex="-1" aria-labelledby="modalNovoAtivoLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
@@ -301,7 +141,6 @@
     </div>
 </div>
 {% endblock %}
-
 {% block extra_js %}
 <script>
     // Busca em tempo real

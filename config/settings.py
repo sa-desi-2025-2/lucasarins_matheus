@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import pymysql
-pymysql.version_info = (1, 3, 13, "final", 0)
+pymysql.version_info = (1, 4, 6, "final", 0)
 pymysql.install_as_MySQLdb()
 
 
@@ -61,9 +61,8 @@ ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
     {
-      'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR / 'templates'], 
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -153,6 +152,3 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-import pymysql
-pymysql.version_info = (1, 4, 0, "final", 0)
-pymysql.install_as_MySQLdb()

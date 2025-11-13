@@ -31,16 +31,12 @@ router.register(r'itensreparo', ItensReparoViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # Rotas da API (mantidas)
-    path('', include(router.urls)),
-    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     
-    # Rotas das Páginas Web (novas)
+    # 1. ROTAS DAS PÁGINAS WEB (DEVE VIR PRIMEIRO)
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
-    path('cadastro/', cadastro_view, name='cadastro'), # Sua view de cadastro adaptada
-    path('', dashboard_view, name='dashboard'), # Página inicial
+    path('cadastro/', cadastro_view, name='cadastro'),
+    path('', dashboard_view, name='dashboard'), # <--- AGORA É A PRIMEIRA A SER VERIFICADA PARA '/'
     path('ativos/', ativos_view, name='ativos'),
     path('ativos/criar/', ativos_criar, name='ativos_criar'),
     path('manutencao/', manutencao_view, name='manutencao'),
@@ -48,4 +44,9 @@ urlpatterns = [
     path('analise-roi/', analise_roi_view, name='analise_roi'),
     path('alertas/', alertas_view, name='alertas_view'),
     path('alertas/criar/', alertas_criar, name='alertas_criar'),
+    
+    # 2. ROTAS DA API (DEVE VIR DEPOIS)
+    path('api/', include(router.urls)), # <--- MUDANÇA: ADICIONE UM PREFIXO '/api/'
+    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

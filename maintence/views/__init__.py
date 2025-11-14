@@ -20,3 +20,4 @@ from maintence.views.logauditorias import LogAuditoriasViewSet
 from maintence.views.reparos import ReparosViewSet
 from maintence.views.usuarios import UsuariosViewSet
 from maintence.views.cadastro import cadastro
+from maintence.views.reparos import ReparosCSVExportView

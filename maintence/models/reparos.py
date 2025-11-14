@@ -73,10 +73,10 @@ class Reparos(models.Model):
         roi = self.calcular_roi()
         self.roi_calculado = roi
 
-        # Salva normalmente (vai fazer INSERT se for novo)
+        # Salva normalmente(faz insert se for novo)
         super().save(*args, **kwargs)
 
-        # Como managed=False, precisamos forçar o update manual
+        # Forçando Update
         if roi is not None:
             with connection.cursor() as cursor:
                 cursor.execute(

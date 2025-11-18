@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include
 from maintence.views import (
+
+
     # ViewSets da API (já existentes)
     AlertasViewSet, AtivosViewSet, CategoriaativosViewSet,
     FornecedoresViewSet, LogAuditoriasViewSet, ReparosViewSet,
@@ -12,12 +14,15 @@ from maintence.views import (
     cadastro_view, # Sua view de cadastro adaptada
 )  
 
+
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
 
 from rest_framework.routers import DefaultRouter
+from maintence.views.reparos import exportar_reparos_pdf
+
 
 router = DefaultRouter()
 router.register(r'alertas', AlertasViewSet)
@@ -31,6 +36,15 @@ router.register(r'itensreparo', ItensReparoViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+   
+ 
+    path('exportar/csv/reparos/', ReparosCSVExportView.as_view()),
+    path('exportar/pdf/reparos/', exportar_reparos_pdf),
+
+
+
+
     
     # 1. ROTAS DAS PÁGINAS WEB (DEVE VIR PRIMEIRO)
     path('login/', login_view, name='login'),
@@ -49,4 +63,4 @@ urlpatterns = [
     path('api/', include(router.urls)), # <--- MUDANÇA: ADICIONE UM PREFIXO '/api/'
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-]
+

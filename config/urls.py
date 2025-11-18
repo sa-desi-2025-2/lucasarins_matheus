@@ -20,6 +20,8 @@ from rest_framework_simplejwt.views import (
 )
 
 from rest_framework.routers import DefaultRouter
+from maintence.views.reparos import exportar_reparos_pdf
+
 
 router = DefaultRouter()
 router.register(r'alertas', AlertasViewSet)
@@ -39,4 +41,7 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'), 
     path('dashboard/', dashboard, name='dashboard'),
     path('exportar/csv/reparos/', ReparosCSVExportView.as_view()),
+    path('exportar/pdf/reparos/', exportar_reparos_pdf),
+
+
 ]

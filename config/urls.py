@@ -22,6 +22,10 @@ from rest_framework_simplejwt.views import (
 
 from rest_framework.routers import DefaultRouter
 from maintence.views.reparos import exportar_reparos_pdf
+from maintence.views.reparos import ReparosCSVExportView
+from maintence.views.reparos import reparos_editar, reparos_atualizar, reparos_criar, reparos_listar
+from maintence.views import reparos as reparos_views
+
 
 
 router = DefaultRouter()
@@ -50,17 +54,24 @@ urlpatterns = [
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
     path('cadastro/', cadastro_view, name='cadastro'),
-    path('', dashboard_view, name='dashboard'), # <--- AGORA É A PRIMEIRA A SER VERIFICADA PARA '/'
+    path('', dashboard_view, name='dashboard'), 
     path('ativos/', ativos_view, name='ativos'),
     path('ativos/criar/', ativos_criar, name='ativos_criar'),
     path('manutencao/', manutencao_view, name='manutencao'),
-    path('reparos/criar/', reparos_criar, name='reparos_criar'),
     path('analise-roi/', analise_roi_view, name='analise_roi'),
     path('alertas/', alertas_view, name='alertas_view'),
     path('alertas/criar/', alertas_criar, name='alertas_criar'),
     
     # 2. ROTAS DA API (DEVE VIR DEPOIS)
-    path('api/', include(router.urls)), # <--- MUDANÇA: ADICIONE UM PREFIXO '/api/'
+    path('api/', include(router.urls)),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
+
+    path('reparos/<int:id_reparo>/editar/', reparos_views.reparos_editar, name='reparos_editar'),
+    path('reparos/<int:id_reparo>/atualizar/', reparos_views.reparos_atualizar, name='reparos_atualizar'),
+    path('reparos/criar/', reparos_views.reparos_criar, name='reparos_criar'),
+    path('reparos/', reparos_views.reparos_listar, name='reparos_listar'),
+
+
+]

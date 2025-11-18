@@ -1,18 +1,23 @@
-# maintence/views/ativos.py
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import api_view, permission_classes  # ✅ IMPORT
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from maintence.models.ativos import Ativos
+from maintence.models.reparos import Reparos 
+from django.db.models import Sum, Avg 
 from maintence.serializers.ativos import AtivosSerializer
+from django.views.decorators.http import require_POST
+from django.shortcuts import get_object_or_404
+from django.contrib import messages # Para mensagens de sucesso/erro
 
 from django.shortcuts import render, redirect
-from maintence.models import Ativos, Categoriaativos
+from maintence.models import Ativos, Categoriaativos, Reparos # Importação de Reparos 
 
 class AtivosViewSet(ModelViewSet):
     queryset = Ativos.objects.all()
     serializer_class = AtivosSerializer
     permission_classes = [IsAuthenticated]
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -40,7 +45,39 @@ def ativos_view(request):
 
 def ativos_criar(request):
     if request.method == 'POST':
-        # Lógica para criar um novo ativo com os dados do POST
-        # ...
+        nome = request.POST.get('nome')
+        descricao = request.POST.get('descricao')
+        id_categoria_id = request.POST.get('id_categoria')
         return redirect('ativos')
+        
+        # Corrigido para garantir que 'codigo_ativo' receba uma string (TEMP)
+        codigo_ativo = request.POST.get('codigo_ativo') or 'TEMP' 
+        preco = request.POST.get('preco')
+        data_aquisicao = request.POST.get('data_aquisicao')
+        vida_util_esperada = request.POST.get('vida_util_esperada')
+        unid_vida_util = request.POST.get('unid_vida_util')
+        # Corrigido para garantir que 'depreciacao_anual' receba um valor numérico
+        depreciacao_anual = request.POST.get('depreciacao_anual') or 0.0 
+        localizacao = request.POST.get('localizacao')
+        
+        if nome and id_categoria_id and preco and data_aquisicao and vida_util_esperada and localizacao:
+            Ativos.objects.create(
+                nome=nome,
+                descricao=descricao,
+                id_categoria_id=id_categoria_id,
+                codigo_ativo=codigo_ativo, # Agora é 'TEMP' se estiver vazio
+                preco=preco,
+                data_aquisicao=data_aquisicao,
+                vida_util_esperada=vida_util_esperada,
+                unid_vida_util=unid_vida_util or 'anos',
+                localizacao=localizacao,
+                depreciacao_anual=depreciacao_anual,
+            )
+            messages.success(request, 'Ativo criado com sucesso!')
+            return redirect('ativos')
+@require_POST
+def ativos_excluir(request, id_ativo): # Agora usa id_ativo
+    ativo = get_object_or_404(Ativos, id_ativo=id_ativo) # Busca por id_ativo
+    ativo.delete()
+    messages.success(request, 'Ativo excluído com sucesso!')
     return redirect('ativos')

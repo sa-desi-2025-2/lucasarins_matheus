@@ -7,12 +7,17 @@ urlpatterns = [
     # Autenticação
     path('login/', auth.login_view, name='login'),
     path('logout/', auth.logout_view, name='logout'),
-    path('cadastro/', cadastro.cadastro_view, name='cadastro'), # Atualizar view existente
+    path('cadastro/', cadastro.cadastro_view, name='cadastro'),
+     # Atualizar view existente
 
     # Páginas
+    
+    path('ativos/excluir/<int:id_ativo>/', ativos.ativos_excluir, name='ativos_excluir'),
     path('', dashboard.dashboard_view, name='dashboard'),
     path('ativos/', ativos.ativos_view, name='ativos'),
     path('ativos/criar/', ativos.ativos_criar, name='ativos_criar'),
+    path('alertas/criar/', alertas_view.alertas_criar, name='alertas_criar'),
+    path('alertas/excluir/<int:pk>/', alertas_view.alertas_excluir, name='alertas_excluir'),
     path('manutencao/', manutencao.manutencao_view, name='manutencao'),
     path('reparos/criar/', manutencao.reparos_criar, name='reparos_criar'),
     path('analise-roi/', analise_roi.analise_roi_view, name='analise_roi'),

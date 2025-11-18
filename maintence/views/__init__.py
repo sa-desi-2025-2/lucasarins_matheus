@@ -11,10 +11,8 @@ from maintence.views.reparos import ReparosViewSet
 
 from maintence.views.reparos import ReparosCSVExportView
 
+
 from maintence.views.itensreparo import ItensReparoViewSet
-
-
-
 
 
 # NOVAS IMPORTAÇÕES DE VIEWS DE PÁGINA

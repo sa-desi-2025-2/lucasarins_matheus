@@ -19,6 +19,7 @@ from reportlab.pdfgen import canvas
 
 
 
+
 class ReparosViewSet(ModelViewSet):
     queryset = Reparos.objects.all()
     serializer_class = ReparosSerializer
@@ -91,7 +92,7 @@ def exportar_reparos_pdf(request):
     p.save()
 
     return response
-=======
+
     def perform_create(self, serializer):
         user = getattr(self.request, 'user', None)
         if user and user.is_authenticated:
@@ -112,9 +113,63 @@ def manutencao_view(request):
 # Adicione a view de criação de reparos
 def reparos_criar(request):
     if request.method == 'POST':
-        # Lógica para criar um novo reparo com os dados do POST
-        # ...
-        pass
+        id_ativo = request.POST.get("id_ativo")
+        tipo = request.POST.get("tipo")
+        descricao = request.POST.get("descricao")
+        tempo_parada_hora = request.POST.get("tempo_parada_hora")
+        extensao_vida_util = request.POST.get("extensao_vida_util")
+        unid_extensao_vida_util = request.POST.get("unid_extensao_vida_util")
+        custo_total_peca = request.POST.get("custo_total_peca")
+        custo_mao_obra = request.POST.get("custo_mao_obra")
+
+        Reparos.objects.create(
+            id_ativo_id=id_ativo,
+            tipo=tipo,
+            descricao=descricao,
+            tempo_parada_hora=tempo_parada_hora,
+            extensao_vida_util=extensao_vida_util,
+            unid_extensao_vida_util=unid_extensao_vida_util,
+            custo_total_peca=custo_total_peca,
+            custo_mao_obra=custo_mao_obra
+        )
+
+        messages.success(request, "Reparo cadastrado com sucesso!")
+
     return redirect('manutencao')
             
 
+
+def reparos_editar(request, id_reparo):
+    reparo = Reparos.objects.get(id_reparo=id_reparo)
+    ativos = Ativos.objects.all()
+
+    return render(request, 'maintence/reparos_editar.html', {
+        'reparo': reparo,
+        'ativos': ativos
+    })
+
+
+def reparos_atualizar(request, id_reparo):
+    if request.method == 'POST':
+        reparo = Reparos.objects.get(id_reparo=id_reparo)
+
+        reparo.id_ativo_id = request.POST.get("id_ativo")
+        reparo.tipo = request.POST.get("tipo")
+        reparo.descricao = request.POST.get("descricao")
+        reparo.custo_total_peca = request.POST.get("custo_total_peca")
+        reparo.custo_mao_obra = request.POST.get("custo_mao_obra")  
+        reparo.tempo_parada_hora = request.POST.get("tempo_parada_hora")
+        reparo.extensao_vida_util = request.POST.get("extensao_vida_util")
+        reparo.unid_extensao_vida_util = request.POST.get("unid_extensao_vida_util")
+
+        reparo.save()
+
+        messages.success(request, "Reparo atualizado com sucesso!")
+
+    return redirect('manutencao')
+
+def reparos_listar(request):
+    reparos = Reparos.objects.all()
+    return render(request, 'maintence/reparos_listar.html', {
+        'reparos': reparos
+    })

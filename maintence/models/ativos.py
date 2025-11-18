@@ -4,6 +4,7 @@ class Ativos(models.Model):
     id_categoria = models.ForeignKey('Categoriaativos', db_column='id_categoria', on_delete=models.CASCADE)
     codigo_ativo = models.CharField(max_length=50, unique=True)
     nome = models.CharField(max_length=100)
+    descricao = models.TextField(null=True, blank=True)
     preco = models.DecimalField(max_digits=12, decimal_places=2)
     data_aquisicao = models.DateField()
     vida_util_esperada = models.IntegerField()

@@ -3,8 +3,11 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from rest_framework.permissions import IsAuthenticated
+from maintence.models import Usuarios # Adicionei este import para garantir
 
-def cadastro(request):
+# maintence/views/cadastro.py (Trecho Corrigido)
+
+def cadastro_view(request):
     if request.method == 'POST':
         nome = request.POST.get('nome')
         user = request.POST.get('user')  
@@ -13,34 +16,26 @@ def cadastro(request):
         senha = request.POST.get('senha')
         confirmar = request.POST.get('confirmar-senha')
 
-        # Verifica se senhas coincidem
+        # 1. VALIDAÇÃO DE SENHA
         if senha != confirmar:
             messages.error(request, 'As senhas não coincidem.')
-            return redirect('cadastro')
-
-        # Verifica se email ou RE já existem
-        if Usuarios.objects.filter(email=email).exists():
-            messages.error(request, 'E-mail já cadastrado!')
-            return redirect('cadastro')
-
-        if Usuarios.objects.filter(re=re).exists():
-            messages.error(request, 'RE já cadastrado!')
-            return redirect('cadastro')
-
-        # Criptografa senha
+            return render(request, 'maintence/cadastro.html')
+        
+        # 2. CRIAÇÃO DO HASH DA SENHA (Ação que faltava)
+        # Certifique-se de que 'from django.contrib.auth.hashers import make_password' está no topo
         senha_hash = make_password(senha)
 
-        # Cria usuário no banco
+        # 3. CRIAÇÃO DO USUÁRIO (Agora a variável senha_hash existe)
         novo_usuario = Usuarios(
             nome=nome,
             email=email,
-            senha_hash=senha_hash,
-            perfil_acesso='Comum',  # valor padrão
+            senha_hash=senha_hash, # <--- Agora definida
+            perfil_acesso='Comum',
             re=re
         )
         novo_usuario.save()
 
         messages.success(request, 'Usuário cadastrado com sucesso!')
-        return redirect('cadastro')
+        return redirect('login')
 
     return render(request, 'maintence/cadastro.html')

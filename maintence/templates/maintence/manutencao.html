@@ -1,0 +1,275 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Manutenção - ROIMANUTENCE{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        margin-bottom: 30px;
+    }
+    
+    .page-title {
+        font-size: 35px;
+        font-weight: 700;
+        color: #000000;
+        margin-bottom: 10px;
+    }
+    
+    .page-subtitle {
+        font-size: 20px;
+        font-weight: 400;
+        color: #000000;
+    }
+    
+    .filter-card {
+        background-color: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .table-card {
+        background-color: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+        padding: 30px;
+    }
+    
+    .table-custom {
+        width: 100%;
+    }
+    
+    .table-custom th {
+        font-weight: 700;
+        font-size: 16px;
+        color: #000000;
+        border-bottom: 2px solid #000000;
+        padding: 15px 10px;
+    }
+    
+    .table-custom td {
+        font-size: 16px;
+        color: #000000;
+        padding: 15px 10px;
+        border-bottom: 1px solid #E5E7EB;
+    }
+    
+    .btn-action {
+        background-color: #000000;
+        color: #ffffff;
+        border: none;
+        border-radius: 10px;
+        padding: 5px 15px;
+        font-size: 14px;
+        transition: all 0.3s;
+    }
+    
+    .btn-action:hover {
+        background-color: #333333;
+    }
+    
+    .modal-header-custom {
+        border-bottom: none;
+        padding: 30px 30px 0;
+    }
+    
+    .modal-title-custom {
+        font-size: 25px;
+        font-weight: 700;
+        color: #000000;
+    }
+    
+    .modal-body-custom {
+        padding: 30px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row align-items-center page-header">
+        <div class="col-md-8">
+            <h1 class="page-title">Manutenção</h1>
+            <p class="page-subtitle">Registre e acompanhe todos os reparos realizados nos ativos</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <button class="btn-primary-custom" data-bs-toggle="modal" data-bs-target="#modalNovoReparo">
+                +Novo Reparo
+            </button>
+        </div>
+    </div>
+    
+    <!-- Filtros -->
+    <div class="filter-card">
+        <div class="row">
+            <div class="col-md-4">
+                <label class="form-label-custom">Ativo</label>
+                <select class="form-control form-control-custom" id="filterAtivo">
+                    <option value="">Todos os ativos</option>
+                    {% for ativo in ativos %}
+                    <option value="{{ ativo.id_ativo }}">{{ ativo.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label-custom">Data Início</label>
+                <input type="date" class="form-control form-control-custom" id="filterDataInicio">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label-custom">Data Fim</label>
+                <input type="date" class="form-control form-control-custom" id="filterDataFim">
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button class="btn-primary-custom w-100" onclick="aplicarFiltros()">Filtrar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tabela de Reparos -->
+    <div class="table-card">
+        <div class="table-responsive">
+            <table class="table-custom">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Ativo</th>
+                        <th>Tipo</th>
+                        <th>Descrição</th>
+                        <th>Custo Total</th>
+                        <th>ROI</th>
+                        <th>Tempo Parada (h)</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaReparos">
+                    {% for reparo in reparos %}
+                    <tr>
+                        <td>{{ reparo.data_reparo|date:"d/m/Y H:i" }}</td>
+                        <td>{{ reparo.id_ativo.nome }}</td>
+                        <td>{{ reparo.tipo }}</td>
+                        <td>{{ reparo.descricao|truncatewords:10 }}</td>
+                        <td>R${{ reparo.custo_total_peca|floatformat:2 }}</td>
+                        <td class="{% if reparo.roi_calculado >= 0 %}roi-positive{% else %}roi-negative{% endif %}">
+                            {{ reparo.roi_calculado|floatformat:2 }}%
+                        </td>
+                        <td>{{ reparo.tempo_parada_hora }}h</td>
+                        <td>
+                            <button class="btn-action" onclick="verDetalhes({{ reparo.id_reparo }})">Ver</button>
+                            <button class="btn-action" onclick="editarReparo({{ reparo.id_reparo }})">Editar</button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center">Nenhum reparo registrado ainda.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Novo Reparo -->
+<div class="modal fade modal-custom" id="modalNovoReparo" tabindex="-1" aria-labelledby="modalNovoReparoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header modal-header-custom">
+                <h5 class="modal-title modal-title-custom" id="modalNovoReparoLabel">Novo Reparo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body modal-body-custom">
+                <form method="POST" action="{% url 'reparos_criar' %}" id="formNovoReparo">
+                    {% csrf_token %}
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="id_ativo" class="form-label-custom">Ativo</label>
+                            <select class="form-control form-control-custom" id="id_ativo" name="id_ativo" required>
+                                <option value="">Selecione...</option>
+                                {% for ativo in ativos %}
+                                <option value="{{ ativo.id_ativo }}">{{ ativo.nome }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="tipo" class="form-label-custom">Tipo de Reparo</label>
+                            <select class="form-control form-control-custom" id="tipo" name="tipo" required>
+                                <option value="">Selecione...</option>
+                                <option value="Preventiva">Preventiva</option>
+                                <option value="Corretiva">Corretiva</option>
+                                <option value="Preditiva">Preditiva</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="descricao" class="form-label-custom">Descrição</label>
+                        <textarea class="form-control form-control-custom" id="descricao" name="descricao" rows="3" required></textarea>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="custo_total_peca" class="form-label-custom">Custo Total Peças (R$)</label>
+                            <input type="number" step="0.01" class="form-control form-control-custom" id="custo_total_peca" name="custo_total_peca" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="tempo_parada_hora" class="form-label-custom">Tempo de Parada (horas)</label>
+                            <input type="number" class="form-control form-control-custom" id="tempo_parada_hora" name="tempo_parada_hora" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="extensao_vida_util" class="form-label-custom">Extensão Vida Útil</label>
+                            <input type="number" class="form-control form-control-custom" id="extensao_vida_util" name="extensao_vida_util" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="unid_extensao_vida_util" class="form-label-custom">Unidade</label>
+                            <select class="form-control form-control-custom" id="unid_extensao_vida_util" name="unid_extensao_vida_util" required>
+                                <option value="anos">Anos</option>
+                                <option value="meses">Meses</option>
+                                <option value="horas">Horas</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="text-end mt-4">
+                        <button type="button" class="btn-cancel me-2" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn-save">Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function aplicarFiltros() {
+        const ativo = document.getElementById('filterAtivo').value;
+        const dataInicio = document.getElementById('filterDataInicio').value;
+        const dataFim = document.getElementById('filterDataFim').value;
+        
+        // Implementar lógica de filtro via AJAX ou recarregar página com parâmetros
+        let url = '{% url "manutencao" %}?';
+        if (ativo) url += `ativo=${ativo}&`;
+        if (dataInicio) url += `data_inicio=${dataInicio}&`;
+        if (dataFim) url += `data_fim=${dataFim}`;
+        
+        window.location.href = url;
+    }
+    
+    function verDetalhes(id) {
+        // Implementar visualização de detalhes
+        window.location.href = `/reparos/${id}/`;
+    }
+    
+    function editarReparo(id) {
+        // Implementar edição
+        window.location.href = `/reparos/${id}/editar/`;
+    }
+</script>
+{% endblock %}

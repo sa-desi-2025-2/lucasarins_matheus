@@ -1,0 +1,322 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Análise ROI - ROIMANUTENCE{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-title {
+        font-size: 35px;
+        font-weight: 700;
+        color: #000000;
+        margin-bottom: 10px;
+    }
+    
+    .page-subtitle {
+        font-size: 20px;
+        font-weight: 400;
+        color: #000000;
+        margin-bottom: 30px;
+    }
+    
+    .filter-card {
+        background-color: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .roi-card {
+        background-color: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+        padding: 30px;
+        margin-bottom: 30px;
+    }
+    
+    .roi-card-title {
+        font-size: 25px;
+        font-weight: 700;
+        color: #000000;
+        margin-bottom: 20px;
+    }
+    
+    .ativo-roi-item {
+        background-color: #F1F5F9;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 15px;
+    }
+    
+    .ativo-roi-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    
+    .ativo-roi-name {
+        font-size: 20px;
+        font-weight: 700;
+        color: #000000;
+    }
+    
+    .ativo-roi-value {
+        font-size: 28px;
+        font-weight: 700;
+    }
+    
+    .roi-details {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+    
+    .roi-detail-item {
+        text-align: center;
+    }
+    
+    .roi-detail-label {
+        font-size: 14px;
+        color: #868484;
+        margin-bottom: 5px;
+    }
+    
+    .roi-detail-value {
+        font-size: 18px;
+        font-weight: 700;
+        color: #000000;
+    }
+    
+    .progress-bar-custom {
+        height: 10px;
+        border-radius: 5px;
+        background-color: #E5E7EB;
+        margin-top: 10px;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        border-radius: 5px;
+        transition: width 0.3s;
+    }
+    
+    .progress-positive {
+        background-color: #015707;
+    }
+    
+    .progress-negative {
+        background-color: #570101;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="page-title">Análise ROI</h1>
+    <p class="page-subtitle">Analise o retorno sobre investimento dos seus ativos e reparos</p>
+    
+    <!-- Filtros -->
+    <div class="filter-card">
+        <div class="row">
+            <div class="col-md-4">
+                <label class="form-label-custom">Período</label>
+                <select class="form-control form-control-custom" id="filterPeriodo">
+                    <option value="30">Últimos 30 dias</option>
+                    <option value="90">Últimos 90 dias</option>
+                    <option value="180">Últimos 6 meses</option>
+                    <option value="365" selected>Último ano</option>
+                    <option value="all">Todo período</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label-custom">Categoria</label>
+                <select class="form-control form-control-custom" id="filterCategoria">
+                    <option value="">Todas as categorias</option>
+                    {% for categoria in categorias %}
+                    <option value="{{ categoria.id_categoria }}">{{ categoria.nome_categoria }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label-custom">Ordenar por</label>
+                <select class="form-control form-control-custom" id="filterOrdenacao">
+                    <option value="roi_desc">Maior ROI</option>
+                    <option value="roi_asc">Menor ROI</option>
+                    <option value="custo_desc">Maior Custo</option>
+                    <option value="nome">Nome</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ROI Geral -->
+    <div class="row">
+        <div class="col-md-4">
+            <div class="roi-card text-center">
+                <div class="stats-label">ROI Médio Geral</div>
+                <div class="stats-value {% if roi_medio >= 0 %}roi-positive{% else %}roi-negative{% endif %}">
+                    {{ roi_medio|floatformat:2 }}%
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="roi-card text-center">
+                <div class="stats-label">Investimento Total</div>
+                <div class="stats-value">R${{ investimento_total|floatformat:2 }}</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="roi-card text-center">
+                <div class="stats-label">Retorno Estimado</div>
+                <div class="stats-value roi-positive">R${{ retorno_estimado|floatformat:2 }}</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ROI por Ativo -->
+    <div class="roi-card">
+        <h3 class="roi-card-title">ROI por Ativo</h3>
+        
+        {% for ativo_roi in ativos_roi %}
+        <div class="ativo-roi-item">
+            <div class="ativo-roi-header">
+                <div>
+                    <div class="ativo-roi-name">{{ ativo_roi.nome }}</div>
+                    <div class="text-secondary-custom">{{ ativo_roi.categoria }}</div>
+                </div>
+                <div class="ativo-roi-value {% if ativo_roi.roi >= 0 %}roi-positive{% else %}roi-negative{% endif %}">
+                    {{ ativo_roi.roi|floatformat:2 }}%
+                </div>
+            </div>
+            
+            <div class="roi-details">
+                <div class="roi-detail-item">
+                    <div class="roi-detail-label">Valor Inicial</div>
+                    <div class="roi-detail-value">R${{ ativo_roi.valor_inicial|floatformat:2 }}</div>
+                </div>
+                <div class="roi-detail-item">
+                    <div class="roi-detail-label">Total Investido</div>
+                    <div class="roi-detail-value">R${{ ativo_roi.total_investido|floatformat:2 }}</div>
+                </div>
+                <div class="roi-detail-item">
+                    <div class="roi-detail-label">Valor Atual</div>
+                    <div class="roi-detail-value">R${{ ativo_roi.valor_atual|floatformat:2 }}</div>
+                </div>
+                <div class="roi-detail-item">
+                    <div class="roi-detail-label">Nº Reparos</div>
+                    <div class="roi-detail-value">{{ ativo_roi.num_reparos }}</div>
+                </div>
+            </div>
+            
+            <div class="progress-bar-custom">
+                <div class="progress-fill {% if ativo_roi.roi >= 0 %}progress-positive{% else %}progress-negative{% endif %}" 
+                     style="width: {{ ativo_roi.roi_percent }}%"></div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="alert alert-info">
+            Nenhum dado disponível para análise de ROI no momento.
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Gráfico de Evolução do ROI -->
+    <div class="roi-card">
+        <h3 class="roi-card-title">Evolução do ROI ao Longo do Tempo</h3>
+        <canvas id="chartEvolucaoROI"></canvas>
+    </div>
+    
+    <!-- Comparação de ROI por Categoria -->
+    <div class="roi-card">
+        <h3 class="roi-card-title">ROI Médio por Categoria</h3>
+        <canvas id="chartROICategoria"></canvas>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+    // Gráfico de Evolução do ROI
+    const ctxEvolucao = document.getElementById('chartEvolucaoROI');
+    if (ctxEvolucao) {
+        new Chart(ctxEvolucao, {
+            type: 'line',
+            data: {
+                labels: {{ evolucao_labels|safe }},
+                datasets: [{
+                    label: 'ROI (%)',
+                    data: {{ evolucao_valores|safe }},
+                    borderColor: '#000000',
+                    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+    
+    // Gráfico de ROI por Categoria
+    const ctxCategoria = document.getElementById('chartROICategoria');
+    if (ctxCategoria) {
+        new Chart(ctxCategoria, {
+            type: 'bar',
+            data: {
+                labels: {{ categoria_labels|safe }},
+                datasets: [{
+                    label: 'ROI Médio (%)',
+                    data: {{ categoria_roi|safe }},
+                    backgroundColor: '#000000',
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+    
+    // Aplicar filtros
+    document.getElementById('filterPeriodo').addEventListener('change', aplicarFiltros);
+    document.getElementById('filterCategoria').addEventListener('change', aplicarFiltros);
+    document.getElementById('filterOrdenacao').addEventListener('change', aplicarFiltros);
+    
+    function aplicarFiltros() {
+        const periodo = document.getElementById('filterPeriodo').value;
+        const categoria = document.getElementById('filterCategoria').value;
+        const ordenacao = document.getElementById('filterOrdenacao').value;
+        
+        let url = '{% url "analise_roi" %}?';
+        if (periodo) url += `periodo=${periodo}&`;
+        if (categoria) url += `categoria=${categoria}&`;
+        if (ordenacao) url += `ordenacao=${ordenacao}`;
+        
+        window.location.href = url;
+    }
+</script>
+{% endblock %}

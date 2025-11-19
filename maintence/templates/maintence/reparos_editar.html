@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %} 
+
+{% block title %}Editar Reparo - {{ reparo.id_reparo }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row align-items-center mb-4">
+        <div class="col-md-12">
+            <h1 class="page-title">Editar Reparo #{{ reparo.id_reparo }}</h1>
+            <p class="page-subtitle">Modifique os dados do reparo realizado no ativo {{ reparo.id_ativo.nome }}</p>
+        </div>
+    </div>
+    
+    <div class="card p-4 shadow-sm">
+        <!-- O formulário deve apontar para a rota de atualização -->
+        <form method="POST" action="{% url 'reparos_atualizar' reparo.id_reparo %}" id="formEditarReparo">
+            {% csrf_token %}
+            
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label for="id_ativo" class="form-label-custom">Ativo</label>
+                    <select class="form-select form-control-custom" id="id_ativo" name="id_ativo" required>
+                        <option value="">Selecione...</option>
+                        {% for ativo in ativos %}
+                        <option value="{{ ativo.id_ativo }}" {% if ativo.id_ativo == reparo.id_ativo.id_ativo %}selected{% endif %}>
+                            {{ ativo.nome }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="tipo" class="form-label-custom">Tipo de Reparo</label>
+                    <select class="form-select form-control-custom" id="tipo" name="tipo" required>
+                        <option value="">Selecione...</option>
+                        {% for t in 'Preventiva,Corretiva,Preditiva'|split:',' %}
+                        <option value="{{ t }}" {% if t == reparo.tipo %}selected{% endif %}>{{ t }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="descricao" class="form-label-custom">Descrição</label>
+                <textarea class="form-control form-control-custom" id="descricao" name="descricao" rows="3" required>{{ reparo.descricao }}</textarea>
+            </div>
+            
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label for="custo_total_peca" class="form-label-custom">Custo Total Peças (R$)</label>
+                    <input type="number" step="0.01" class="form-control form-control-custom" id="custo_total_peca" name="custo_total_peca" value="{{ reparo.custo_total_peca|default:'0.00' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="custo_mao_obra" class="form-label-custom">Custo Mão de Obra (R$)</label>
+                    <input type="number" step="0.01" class="form-control form-control-custom"id="custo_mao_obra" name="custo_mao_obra" value="{{ reparo.custo_mao_obra|default:'0.00' }}" required>
+                </div>
+            </div>
+            
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label for="tempo_parada_hora" class="form-label-custom">Tempo de Parada (horas)</label>
+                    <input type="number" class="form-control form-control-custom" id="tempo_parada_hora" name="tempo_parada_hora" value="{{ reparo.tempo_parada_hora|default:'0' }}" required>
+                </div>
+            </div>
+            
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label for="extensao_vida_util" class="form-label-custom">Extensão Vida Útil</label>
+                    <input type="number" class="form-control form-control-custom" id="extensao_vida_util" name="extensao_vida_util" value="{{ reparo.extensao_vida_util|default:'0' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="unid_extensao_vida_util" class="form-label-custom">Unidade</label>
+                    <select class="form-select form-control-custom" id="unid_extensao_vida_util" name="unid_extensao_vida_util" required>
+                        {% for u in 'anos,meses,horas'|split:',' %}
+                        <option value="{{ u }}" {% if u == reparo.unid_extensao_vida_util %}selected{% endif %}>{{ u|capfirst }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <div class="text-end mt-4">
+                <a href="{% url 'manutencao' %}" class="btn btn-secondary me-2">Cancelar</a>
+                <button type="submit" class="btn btn-primary-custom">Salvar Alterações</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

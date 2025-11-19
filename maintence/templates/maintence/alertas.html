@@ -5,27 +5,23 @@
 
 {% block extra_css %}
 <style>
-    .page-header {
-        margin-bottom: 30px;
-    }
-    
+    /* Estilos customizados para Alertas (Mínimo) */
     .page-title {
-        font-size: 35px;
+        font-size: 2rem;
         font-weight: 700;
-        color: #000000;
-        margin-bottom: 10px;
+        color: var(--cor-primaria);
     }
     
     .page-subtitle {
-        font-size: 20px;
+        font-size: 1.25rem;
         font-weight: 400;
-        color: #000000;
+        color: var(--cor-secundaria);
     }
     
     .filter-tabs {
-        background-color: #ffffff;
-        border-radius: 15px;
-        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+        background-color: var(--cor-card);
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
         padding: 10px;
         margin-bottom: 30px;
         display: flex;
@@ -37,39 +33,31 @@
         padding: 12px;
         border: none;
         background-color: transparent;
-        border-radius: 10px;
-        font-weight: 700;
-        font-size: 18px;
-        color: #000000;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        font-size: 1rem;
+        color: var(--cor-primaria);
         cursor: pointer;
         transition: all 0.3s;
     }
     
     .filter-tab.active {
-        background-color: #000000;
+        background-color: var(--cor-primaria);
         color: #ffffff;
     }
     
     .alerta-card {
-        background-color: #ffffff;
-        border-radius: 15px;
-        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+        background-color: var(--cor-card);
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
         padding: 25px;
         margin-bottom: 20px;
         border-left: 5px solid;
     }
     
-    .alerta-card.critico {
-        border-left-color: #DC2626;
-    }
-    
-    .alerta-card.atencao {
-        border-left-color: #F59E0B;
-    }
-    
-    .alerta-card.info {
-        border-left-color: #3B82F6;
-    }
+    .alerta-card.critico { border-left-color: var(--cor-erro); }
+    .alerta-card.atencao { border-left-color: var(--cor-alerta); }
+    .alerta-card.info { border-left-color: #3B82F6; }
     
     .alerta-header {
         display: flex;
@@ -79,35 +67,24 @@
     }
     
     .alerta-tipo {
-        font-size: 20px;
+        font-size: 1.25rem;
         font-weight: 700;
-        color: #000000;
-    }
-    
-    .alerta-data {
-        font-size: 14px;
-        color: #868484;
+        color: var(--cor-primaria);
     }
     
     .alerta-ativo {
-        font-size: 18px;
+        font-size: 1rem;
         font-weight: 600;
-        color: #000000;
+        color: var(--cor-primaria);
         margin-bottom: 10px;
-    }
-    
-    .alerta-descricao {
-        font-size: 16px;
-        color: #000000;
-        margin-bottom: 15px;
     }
     
     .alerta-metricas {
         display: flex;
         gap: 30px;
         padding: 15px;
-        background-color: #F1F5F9;
-        border-radius: 10px;
+        background-color: var(--cor-fundo);
+        border-radius: 0.5rem;
         margin-bottom: 15px;
     }
     
@@ -116,41 +93,36 @@
     }
     
     .alerta-metrica-label {
-        font-size: 14px;
-        color: #868484;
+        font-size: 0.875rem;
+        color: var(--cor-secundaria);
         margin-bottom: 5px;
     }
     
     .alerta-metrica-value {
-        font-size: 20px;
+        font-size: 1.25rem;
         font-weight: 700;
-        color: #000000;
-    }
-    
-    .alerta-actions {
-        display: flex;
-        gap: 10px;
+        color: var(--cor-primaria);
     }
     
     .btn-resolver {
-        background-color: #015707;
+        background-color: var(--cor-sucesso);
         color: #ffffff;
         border: none;
-        border-radius: 10px;
+        border-radius: 0.5rem;
         padding: 8px 20px;
         font-weight: 600;
         transition: all 0.3s;
     }
     
     .btn-resolver:hover {
-        background-color: #013d05;
+        background-color: #059669;
     }
     
     .btn-detalhes {
-        background-color: #000000;
+        background-color: var(--cor-primaria);
         color: #ffffff;
         border: none;
-        border-radius: 10px;
+        border-radius: 0.5rem;
         padding: 8px 20px;
         font-weight: 600;
         transition: all 0.3s;
@@ -159,145 +131,99 @@
     .btn-detalhes:hover {
         background-color: #333333;
     }
-    
-    .badge-critico {
-        background-color: #FEE2E2;
-        color: #DC2626;
-        border-radius: 5px;
-        padding: 5px 15px;
-        font-size: 14px;
-        font-weight: 600;
-    }
-    
-    .badge-atencao {
-        background-color: #FEF3C7;
-        color: #F59E0B;
-        border-radius: 5px;
-        padding: 5px 15px;
-        font-size: 14px;
-        font-weight: 600;
-    }
-    
-    .badge-info {
-        background-color: #DBEAFE;
-        color: #3B82F6;
-        border-radius: 5px;
-        padding: 5px 15px;
-        font-size: 14px;
-        font-weight: 600;
-    }
-    
-    .modal-header-custom {
-        border-bottom: none;
-        padding: 30px 30px 0;
-    }
-    
-    .modal-title-custom {
-        font-size: 25px;
-        font-weight: 700;
-        color: #000000;
-    }
-    
-    .modal-body-custom {
-        padding: 30px;
-    }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row align-items-center page-header">
-        <div class="col-md-8">
-            <h1 class="page-title">Alertas</h1>
-            <p class="page-subtitle">Monitore alertas críticos e tome decisões informadas sobre seus ativos</p>
-        </div>
-        <div class="col-md-4 text-end">
-            <button class="btn-primary-custom" data-bs-toggle="modal" data-bs-target="#modalNovoAlerta">
-                +Novo Alerta
-            </button>
-        </div>
+<div class="row align-items-center mb-4">
+    <div class="col-md-8">
+        <h1 class="page-title">Alertas</h1>
+        <p class="page-subtitle">Monitore alertas críticos e tome decisões informadas sobre seus ativos</p>
     </div>
+    <div class="col-md-4 text-end">
+        <button class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#modalNovoAlerta">
+            + Novo Alerta
+        </button>
+    </div>
+</div>
     
-    <!-- Filtros por Status -->
-    <div class="filter-tabs">
-        <button class="filter-tab active" data-filter="todos">Todos ({{ total_alertas }})</button>
-        <button class="filter-tab" data-filter="ativos">Ativos ({{ alertas_ativos }})</button>
-        <button class="filter-tab" data-filter="resolvidos">Resolvidos ({{ alertas_resolvidos }})</button>
-        <button class="filter-tab" data-filter="criticos">Críticos ({{ alertas_criticos }})</button>
-    </div>
+<!-- Filtros por Status -->
+<div class="filter-tabs">
+    <button class="filter-tab active" data-filter="todos">Todos ({{ total_alertas }})</button>
+    <button class="filter-tab" data-filter="ativos">Ativos ({{ alertas_ativos }})</button>
+    <button class="filter-tab" data-filter="resolvidos">Resolvidos ({{ alertas_resolvidos }})</button>
+    <button class="filter-tab" data-filter="criticos">Críticos ({{ alertas_criticos }})</button>
+</div>
     
-    <!-- Lista de Alertas -->
-    <div id="alertasContainer">
-        {% for alerta in alertas %}
-        <div class="alerta-card {{ alerta.severidade|lower }}" data-status="{{ alerta.status_alerta|lower }}">
-            <div class="alerta-header">
-                <div>
-                    <div class="alerta-tipo">{{ alerta.tipo_alerta }}</div>
-                    <span class="badge-{{ alerta.severidade|lower }}">{{ alerta.severidade }}</span>
-                </div>
-                <div class="alerta-data">{{ alerta.data_criacao|date:"d/m/Y H:i" }}</div>
+<!-- Lista de Alertas -->
+<div id="alertasContainer">
+    {% for alerta in alertas %}
+    <div class="alerta-card {{ alerta.severidade|lower }}" data-status="{{ alerta.status_alerta|lower }}">
+        <div class="alerta-header">
+            <div>
+                <div class="alerta-tipo">{{ alerta.tipo_alerta }}</div>
+                <span class="badge badge-status {{ alerta.severidade|lower }}">{{ alerta.severidade }}</span>
             </div>
-            
-            <div class="alerta-ativo">
-                Ativo: {{ alerta.id_ativo.nome }}
+            <div class="alerta-data text-muted">{{ alerta.data_criacao|date:"d/m/Y H:i" }}</div>
+        </div>
+        
+        <div class="alerta-ativo">
+            Ativo: {{ alerta.id_ativo.nome }}
+        </div>
+        
+        <div class="alerta-descricao text-secondary mb-3">
+            {{ alerta.descricao }}
+        </div>
+        
+        <div class="alerta-metricas">
+            <div class="alerta-metrica">
+                <div class="alerta-metrica-label">Limiar ROI</div>
+                <div class="alerta-metrica-value">{{ alerta.limiar_roi|floatformat:2 }}%</div>
             </div>
-            
-            <div class="alerta-descricao">
-                {{ alerta.descricao }}
+            <div class="alerta-metrica">
+                <div class="alerta-metrica-label">Limiar %</div>
+                <div class="alerta-metrica-value">{{ alerta.limiar_porcentagem|floatformat:2 }}%</div>
             </div>
-            
-            <div class="alerta-metricas">
-                <div class="alerta-metrica">
-                    <div class="alerta-metrica-label">Limiar ROI</div>
-                    <div class="alerta-metrica-value">{{ alerta.limiar_roi|floatformat:2 }}%</div>
+            <div class="alerta-metrica">
+                <div class="alerta-metrica-label">Status</div>
+                <div class="alerta-metrica-value">
+                    <span class="badge badge-status {{ alerta.status_alerta|lower }}">
+                        {{ alerta.status_alerta }}
+                    </span>
                 </div>
-                <div class="alerta-metrica">
-                    <div class="alerta-metrica-label">Limiar %</div>
-                    <div class="alerta-metrica-value">{{ alerta.limiar_porcentagem|floatformat:2 }}%</div>
-                </div>
-                <div class="alerta-metrica">
-                    <div class="alerta-metrica-label">Status</div>
-                    <div class="alerta-metrica-value">
-                        {% if alerta.status_alerta == 'Ativo' %}
-                            <span class="badge-active">{{ alerta.status_alerta }}</span>
-                        {% else %}
-                            <span class="badge-inactive">{{ alerta.status_alerta }}</span>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            
-            <div class="alerta-actions">
-                {% if alerta.status_alerta == 'Ativo' %}
-                <button class="btn-resolver" onclick="resolverAlerta({{ alerta.id_alerta }})">Resolver</button>
-                {% endif %}
-                <button class="btn-detalhes" onclick="verDetalhes({{ alerta.id_alerta }})">Ver Detalhes</button>
             </div>
         </div>
-        {% empty %}
-        <div class="alert alert-info">
-            Nenhum alerta no momento. Tudo está funcionando perfeitamente!
+        
+        <div class="alerta-actions">
+            {% if alerta.status_alerta == 'Ativo' %}
+            <button class="btn-resolver" onclick="resolverAlerta({{ alerta.id_alerta }})">Resolver</button>
+            {% endif %}
+            <button class="btn-detalhes" onclick="verDetalhes({{ alerta.id_alerta }})">Editar Alerta</button>
         </div>
-        {% endfor %}
     </div>
+    {% empty %}
+    <div class="alert alert-info">
+        Nenhum alerta no momento. Tudo está funcionando perfeitamente!
+    </div>
+    {% endfor %}
 </div>
 
 <!-- Modal Novo Alerta -->
-<div class="modal fade modal-custom" id="modalNovoAlerta" tabindex="-1" aria-labelledby="modalNovoAlertaLabel" aria-hidden="true">
+<div class="modal fade" id="modalNovoAlerta" tabindex="-1" aria-labelledby="modalNovoAlertaLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <div class="modal-header modal-header-custom">
-                <h5 class="modal-title modal-title-custom" id="modalNovoAlertaLabel">Novo Alerta</h5>
+        <div class="modal-content card">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="modalNovoAlertaLabel">Novo Alerta</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body modal-body-custom">
+            <div class="modal-body">
                 <form method="POST" action="{% url 'alertas_criar' %}" id="formNovoAlerta">
                     {% csrf_token %}
                     
-                    <div class="row mb-3">
+                    <div class="row g-3 mb-3">
                         <div class="col-md-6">
                             <label for="id_ativo" class="form-label-custom">Ativo</label>
-                            <select class="form-control form-control-custom" id="id_ativo" name="id_ativo" required>
+                            <select class="form-select form-control-custom" id="id_ativo" name="id_ativo" required>
                                 <option value="">Selecione...</option>
                                 {% for ativo in ativos %}
                                 <option value="{{ ativo.id_ativo }}">{{ ativo.nome }}</option>
@@ -306,7 +232,7 @@
                         </div>
                         <div class="col-md-6">
                             <label for="tipo_alerta" class="form-label-custom">Tipo de Alerta</label>
-                            <select class="form-control form-control-custom" id="tipo_alerta" name="tipo_alerta" required>
+                            <select class="form-select form-control-custom" id="tipo_alerta" name="tipo_alerta" required>
                                 <option value="">Selecione...</option>
                                 <option value="ROI Negativo">ROI Negativo</option>
                                 <option value="Custo Alto">Custo Alto</option>
@@ -316,7 +242,7 @@
                         </div>
                     </div>
                     
-                    <div class="row mb-3">
+                    <div class="row g-3 mb-3">
                         <div class="col-md-6">
                             <label for="limiar_roi" class="form-label-custom">Limiar ROI (%)</label>
                             <input type="number" step="0.01" class="form-control form-control-custom" id="limiar_roi" name="limiar_roi" required>
@@ -333,8 +259,8 @@
                     </div>
                     
                     <div class="text-end mt-4">
-                        <button type="button" class="btn-cancel me-2" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn-save">Salvar</button>
+                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary-custom">Salvar</button>
                     </div>
                 </form>
             </div>
@@ -387,7 +313,10 @@
     }
     
     function verDetalhes(id) {
-        window.location.href = `/alertas/${id}/`;
+        // CORREÇÃO: Aponta para a rota de edição correta
+        window.location.href = `/alertas/${id}/editar/`;
     }
 </script>
 {% endblock %}
+
+

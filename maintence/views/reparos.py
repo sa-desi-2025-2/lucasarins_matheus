@@ -1,6 +1,7 @@
 from rest_framework.viewsets import ModelViewSet
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.shortcuts import get_object_or_404, render, redirect 
 from django.contrib.auth.hashers import make_password
 from rest_framework.permissions import IsAuthenticated
 from maintence.models import Reparos, Ativos # Importa os models necessários
@@ -12,6 +13,7 @@ from rest_framework import serializers
 from rest_framework.views import APIView
 from django.http import HttpResponse
 import csv
+from django.views.decorators.http import require_POST
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 
@@ -147,7 +149,13 @@ def reparos_editar(request, id_reparo):
         'reparo': reparo,
         'ativos': ativos
     })
-
+@require_POST
+def reparos_excluir(request, id_reparo):
+    """Exclui um reparo específico."""
+    reparo = get_object_or_404(Reparos, id_reparo=id_reparo)
+    reparo.delete()
+    messages.success(request, "Reparo excluído com sucesso!")
+    return redirect('manutencao')
 
 def reparos_atualizar(request, id_reparo):
     if request.method == 'POST':
@@ -173,3 +181,4 @@ def reparos_listar(request):
     return render(request, 'maintence/reparos_listar.html', {
         'reparos': reparos
     })
+    

@@ -5,109 +5,75 @@
 
 {% block extra_css %}
 <style>
+    /* Estilos customizados para Análise ROI (Mínimo) */
     .page-title {
-        font-size: 35px;
+        font-size: 2rem;
         font-weight: 700;
-        color: #000000;
-        margin-bottom: 10px;
+        color: var(--cor-primaria);
     }
     
     .page-subtitle {
-        font-size: 20px;
+        font-size: 1.25rem;
         font-weight: 400;
-        color: #000000;
-        margin-bottom: 30px;
-    }
-    
-    .filter-card {
-        background-color: #ffffff;
-        border-radius: 15px;
-        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), inset 0px 4px 4px rgba(0, 0, 0, 0.25);
-        padding: 20px;
-        margin-bottom: 30px;
-    }
-    
-    .roi-card {
-        background-color: #ffffff;
-        border-radius: 15px;
-        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), inset 0px 4px 4px rgba(0, 0, 0, 0.25);
-        padding: 30px;
-        margin-bottom: 30px;
+        color: var(--cor-secundaria);
     }
     
     .roi-card-title {
-        font-size: 25px;
+        font-size: 1.5rem;
         font-weight: 700;
-        color: #000000;
-        margin-bottom: 20px;
+        color: var(--cor-primaria);
+        margin-bottom: 1.5rem;
     }
     
     .ativo-roi-item {
-        background-color: #F1F5F9;
-        border-radius: 10px;
-        padding: 20px;
-        margin-bottom: 15px;
-    }
-    
-    .ativo-roi-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 15px;
+        background-color: var(--cor-fundo);
+        border-radius: 0.5rem;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
     }
     
     .ativo-roi-name {
-        font-size: 20px;
+        font-size: 1.25rem;
         font-weight: 700;
-        color: #000000;
+        color: var(--cor-primaria);
     }
     
     .ativo-roi-value {
-        font-size: 28px;
+        font-size: 1.75rem;
         font-weight: 700;
-    }
-    
-    .roi-details {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 10px;
-    }
-    
-    .roi-detail-item {
-        text-align: center;
     }
     
     .roi-detail-label {
-        font-size: 14px;
-        color: #868484;
-        margin-bottom: 5px;
+        font-size: 0.875rem;
+        color: var(--cor-secundaria);
+        margin-bottom: 0.25rem;
     }
     
     .roi-detail-value {
-        font-size: 18px;
+        font-size: 1.1rem;
         font-weight: 700;
-        color: #000000;
+        color: var(--cor-primaria);
     }
     
     .progress-bar-custom {
-        height: 10px;
-        border-radius: 5px;
-        background-color: #E5E7EB;
-        margin-top: 10px;
+        height: 0.5rem;
+        border-radius: 0.25rem;
+        background-color: #e5e7eb;
+        margin-top: 0.75rem;
     }
     
     .progress-fill {
         height: 100%;
-        border-radius: 5px;
+        border-radius: 0.25rem;
         transition: width 0.3s;
     }
     
     .progress-positive {
-        background-color: #015707;
+        background-color: var(--cor-sucesso);
     }
     
     .progress-negative {
-        background-color: #570101;
+        background-color: var(--cor-erro);
     }
 </style>
 {% endblock %}
@@ -118,11 +84,11 @@
     <p class="page-subtitle">Analise o retorno sobre investimento dos seus ativos e reparos</p>
     
     <!-- Filtros -->
-    <div class="filter-card">
-        <div class="row">
+    <div class="card p-4 mb-4 shadow-sm">
+        <div class="row g-3">
             <div class="col-md-4">
                 <label class="form-label-custom">Período</label>
-                <select class="form-control form-control-custom" id="filterPeriodo">
+                <select class="form-select form-control-custom" id="filterPeriodo">
                     <option value="30">Últimos 30 dias</option>
                     <option value="90">Últimos 90 dias</option>
                     <option value="180">Últimos 6 meses</option>
@@ -132,7 +98,7 @@
             </div>
             <div class="col-md-4">
                 <label class="form-label-custom">Categoria</label>
-                <select class="form-control form-control-custom" id="filterCategoria">
+                <select class="form-select form-control-custom" id="filterCategoria">
                     <option value="">Todas as categorias</option>
                     {% for categoria in categorias %}
                     <option value="{{ categoria.id_categoria }}">{{ categoria.nome_categoria }}</option>
@@ -141,7 +107,7 @@
             </div>
             <div class="col-md-4">
                 <label class="form-label-custom">Ordenar por</label>
-                <select class="form-control form-control-custom" id="filterOrdenacao">
+                <select class="form-select form-control-custom" id="filterOrdenacao">
                     <option value="roi_desc">Maior ROI</option>
                     <option value="roi_asc">Menor ROI</option>
                     <option value="custo_desc">Maior Custo</option>
@@ -152,59 +118,59 @@
     </div>
     
     <!-- ROI Geral -->
-    <div class="row">
+    <div class="row g-4 mb-4">
         <div class="col-md-4">
-            <div class="roi-card text-center">
-                <div class="stats-label">ROI Médio Geral</div>
+            <div class="card p-4 text-center shadow-sm">
+                <div class="text-muted mb-2">ROI Médio Geral</div>
                 <div class="stats-value {% if roi_medio >= 0 %}roi-positive{% else %}roi-negative{% endif %}">
                     {{ roi_medio|floatformat:2 }}%
                 </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="roi-card text-center">
-                <div class="stats-label">Investimento Total</div>
+            <div class="card p-4 text-center shadow-sm">
+                <div class="text-muted mb-2">Investimento Total</div>
                 <div class="stats-value">R${{ investimento_total|floatformat:2 }}</div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="roi-card text-center">
-                <div class="stats-label">Retorno Estimado</div>
+            <div class="card p-4 text-center shadow-sm">
+                <div class="text-muted mb-2">Retorno Estimado</div>
                 <div class="stats-value roi-positive">R${{ retorno_estimado|floatformat:2 }}</div>
             </div>
         </div>
     </div>
     
     <!-- ROI por Ativo -->
-    <div class="roi-card">
+    <div class="card p-4 mb-4 shadow-sm">
         <h3 class="roi-card-title">ROI por Ativo</h3>
         
         {% for ativo_roi in ativos_roi %}
         <div class="ativo-roi-item">
-            <div class="ativo-roi-header">
+            <div class="ativo-roi-header d-flex justify-content-between align-items-center">
                 <div>
                     <div class="ativo-roi-name">{{ ativo_roi.nome }}</div>
-                    <div class="text-secondary-custom">{{ ativo_roi.categoria }}</div>
+                    <div class="text-secondary">{{ ativo_roi.categoria }}</div>
                 </div>
                 <div class="ativo-roi-value {% if ativo_roi.roi >= 0 %}roi-positive{% else %}roi-negative{% endif %}">
                     {{ ativo_roi.roi|floatformat:2 }}%
                 </div>
             </div>
             
-            <div class="roi-details">
-                <div class="roi-detail-item">
+            <div class="row roi-details mt-3">
+                <div class="col-3 roi-detail-item">
                     <div class="roi-detail-label">Valor Inicial</div>
                     <div class="roi-detail-value">R${{ ativo_roi.valor_inicial|floatformat:2 }}</div>
                 </div>
-                <div class="roi-detail-item">
+                <div class="col-3 roi-detail-item">
                     <div class="roi-detail-label">Total Investido</div>
                     <div class="roi-detail-value">R${{ ativo_roi.total_investido|floatformat:2 }}</div>
                 </div>
-                <div class="roi-detail-item">
+                <div class="col-3 roi-detail-item">
                     <div class="roi-detail-label">Valor Atual</div>
                     <div class="roi-detail-value">R${{ ativo_roi.valor_atual|floatformat:2 }}</div>
                 </div>
-                <div class="roi-detail-item">
+                <div class="col-3 roi-detail-item">
                     <div class="roi-detail-label">Nº Reparos</div>
                     <div class="roi-detail-value">{{ ativo_roi.num_reparos }}</div>
                 </div>
@@ -223,13 +189,13 @@
     </div>
     
     <!-- Gráfico de Evolução do ROI -->
-    <div class="roi-card">
+    <div class="card p-4 mb-4 shadow-sm">
         <h3 class="roi-card-title">Evolução do ROI ao Longo do Tempo</h3>
         <canvas id="chartEvolucaoROI"></canvas>
     </div>
     
     <!-- Comparação de ROI por Categoria -->
-    <div class="roi-card">
+    <div class="card p-4 mb-4 shadow-sm">
         <h3 class="roi-card-title">ROI Médio por Categoria</h3>
         <canvas id="chartROICategoria"></canvas>
     </div>
@@ -249,7 +215,7 @@
                 datasets: [{
                     label: 'ROI (%)',
                     data: {{ evolucao_valores|safe }},
-                    borderColor: '#000000',
+                    borderColor: 'var(--cor-primaria)',
                     backgroundColor: 'rgba(0, 0, 0, 0.1)',
                     tension: 0.4,
                     fill: true
@@ -281,7 +247,7 @@
                 datasets: [{
                     label: 'ROI Médio (%)',
                     data: {{ categoria_roi|safe }},
-                    backgroundColor: '#000000',
+                    backgroundColor: 'var(--cor-primaria)',
                     borderRadius: 5
                 }]
             },

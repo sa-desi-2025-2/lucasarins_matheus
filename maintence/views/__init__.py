@@ -10,6 +10,7 @@ from maintence.views.logauditorias import LogAuditoriasViewSet
 from maintence.views.reparos import ReparosViewSet
 
 from maintence.views.reparos import ReparosCSVExportView
+from maintence.views.reparos import reparos_excluir
 
 
 from maintence.views.itensreparo import ItensReparoViewSet
@@ -19,10 +20,12 @@ from maintence.views.itensreparo import ItensReparoViewSet
 from maintence.views.cadastro import cadastro_view
 from maintence.views.auth import login_view, logout_view
 from maintence.views.dashboard import dashboard_view
-from maintence.views.ativos import ativos_view, ativos_criar
+from maintence.views.ativos import ativos_view, ativos_criar,ativos_excluir,ativos_editar,ativos_atualizar
 from maintence.views.reparos import manutencao_view, reparos_criar
 from maintence.views.alertas import alertas_view, alertas_criar
 from maintence.views.analise_roi import analise_roi_view
+from maintence.views.alertas import alertas_editar
+from maintence.views.alertas import alertas_atualizar
 
 
 

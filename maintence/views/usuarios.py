@@ -10,3 +10,4 @@ from maintence.serializers.usuarios import UsuariosSerializer
 class UsuariosViewSet(ModelViewSet):
     queryset = Usuarios.objects.all()
     serializer_class = UsuariosSerializer
+    

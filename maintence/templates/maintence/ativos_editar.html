@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Editar Ativo - {{ ativo.nome }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row align-items-center page-header">
+        <div class="col-md-12">
+            <h1 class="page-title">Editar Ativo: {{ ativo.nome }}</h1>
+            <p class="page-subtitle">ID: {{ ativo.id_ativo }} | Categoria: {{ ativo.id_categoria.nome_categoria }}</p>
+        </div>
+    </div>
+    
+    <div class="card p-4 shadow-sm">
+        <form method="POST" action="{% url 'ativos_atualizar' ativo.id_ativo %}" id="formEditarAtivo">
+            {% csrf_token %}
+            
+            <div class="row g-3 mb-3">
+                <div class="col-md-7">
+                    <label for="nome" class="form-label-custom">Nome do ativo</label>
+                    <input type="text" class="form-control form-control-custom" id="nome" name="nome" value="{{ ativo.nome }}" required>
+                </div>
+                <div class="col-md-5">
+                    <label for="id_categoria" class="form-label-custom">Categoria</label>
+                    <select class="form-select form-control-custom" id="id_categoria" name="id_categoria" required>
+                        {% for categoria in categorias %}
+                        <option value="{{ categoria.id_categoria }}" {% if categoria.id_categoria == ativo.id_categoria.id_categoria %}selected{% endif %}>{{ categoria.nome_categoria }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label for="data_aquisicao" class="form-label-custom">Data Aquisição</label>
+                    <input type="date" class="form-control form-control-custom" id="data_aquisicao" name="data_aquisicao" value="{{ ativo.data_aquisicao|date:'Y-m-d' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="vida_util_esperada" class="form-label-custom">Vida Útil (anos)</label>
+                    <input type="number" class="form-control form-control-custom" id="vida_util_esperada" name="vida_util_esperada" value="{{ ativo.vida_util_esperada }}" required>
+                </div>
+            </div>
+            
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <label for="preco" class="form-label-custom">Custo da Aquisição (R$)</label>
+                    <input type="number" step="0.01" class="form-control form-control-custom" id="preco" name="preco" value="{{ ativo.preco|floatformat:2 }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="valor_atual" class="form-label-custom">Valor Atual(R$)</label>
+                    <input type="number" step="0.01" class="form-control form-control-custom" id="valor_atual" name="valor_atual" value="{{ ativo.valor_atual|floatformat:2 }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="depreciacao_anual" class="form-label-custom">Depreciação Anual (%)</label>
+                    <input type="number" step="0.01" class="form-control form-control-custom" id="depreciacao_anual" name="depreciacao_anual" value="{{ ativo.depreciacao_anual|floatformat:2 }}" required>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="localizacao" class="form-label-custom">Localização</label>
+                <input type="text" class="form-control form-control-custom" id="localizacao" name="localizacao" value="{{ ativo.localizacao }}" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="descricao" class="form-label-custom">Descrição</label>
+                <textarea class="form-control form-control-custom" id="descricao" name="descricao" rows="3">{{ ativo.descricao }}</textarea>
+            </div>
+            
+            <div class="text-end mt-4">
+                <a href="{% url 'ativos' %}" class="btn btn-secondary me-2">Cancelar</a>
+                <button type="submit" class="btn btn-primary-custom">Salvar Alterações</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

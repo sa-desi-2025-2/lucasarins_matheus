@@ -156,9 +156,15 @@
                         </td>
                         <td>{{ reparo.tempo_parada_hora }}h</td>
                         <td>
-                            <button class="btn-action" onclick="verDetalhes({{ reparo.id_reparo }})">Ver</button>
-                            <button class="btn-action" onclick="editarReparo({{ reparo.id_reparo }})">Editar</button>
+                     
+                            <button class="btn-action" onclick="window.location.href='{% url 'reparos_editar' reparo.id_reparo %}'">Editar</button>
+                            
+                            <form method="POST" action="{% url 'reparos_excluir' reparo.id_reparo %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-action" style="background-color: #dc3545;" onclick="return confirm('Tem certeza que deseja excluir o reparo #{{ reparo.id_reparo }}?');">Excluir</button>
+                            </form>
                         </td>
+
                     </tr>
                     {% empty %}
                     <tr>
@@ -266,14 +272,5 @@
         window.location.href = url;
     }
     
-    function verDetalhes(id) {
-        // Implementar visualização de detalhes
-        window.location.href = `/reparos/${id}/`;
-    }
-    
-    function editarReparo(id) {
-        // Implementar edição
-        window.location.href = `/reparos/${id}/editar/`;
-    }
-</script>
+  
 {% endblock %}

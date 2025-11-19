@@ -69,22 +69,12 @@ class Reparos(models.Model):
            (self.custo_mao_obra is None or self.custo_mao_obra == 0):
             raise ValueError("RN001: Reparo deve ter custo total (peças e/ou mão de obra).")
 
-        # Calcula o ROI
+     
         roi = self.calcular_roi()
         self.roi_calculado = roi
 
-        # Salva normalmente(faz insert se for novo)
         super().save(*args, **kwargs)
 
-        # Forçando Update
-        if roi is not None:
-            with connection.cursor() as cursor:
-                cursor.execute(
-                    "UPDATE reparos SET roi_calculado = %s WHERE id_reparo = %s",
-                    [roi, self.id_reparo]
-                )
-
-        type(self).objects.filter(id_reparo=self.id_reparo).update(roi_calculado=roi)
 
     def __str__(self):
         return f"Reparo {self.id_reparo} - {self.id_ativo.nome}"

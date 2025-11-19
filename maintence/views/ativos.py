@@ -48,7 +48,6 @@ def ativos_criar(request):
         nome = request.POST.get('nome')
         descricao = request.POST.get('descricao')
         id_categoria_id = request.POST.get('id_categoria')
-        return redirect('ativos')
         
         # Corrigido para garantir que 'codigo_ativo' receba uma string (TEMP)
         codigo_ativo = request.POST.get('codigo_ativo') or 'TEMP' 
@@ -73,11 +72,48 @@ def ativos_criar(request):
                 localizacao=localizacao,
                 depreciacao_anual=depreciacao_anual,
             )
-            messages.success(request, 'Ativo criado com sucesso!')
-            return redirect('ativos')
+            messmessages.success(request, 'Ativo excluído com sucesso!')
+    return redirect('ativos')
+
+def ativos_editar(request, id_ativo):
+    ativo = get_object_or_404(Ativos, id_ativo=id_ativo)
+    categorias = Categoriaativos.objects.all()
+    
+    context = {
+        'ativo': ativo,
+        'categorias': categorias,
+    }
+    return render(request, 'maintence/ativos_editar.html', context)
+
 @require_POST
-def ativos_excluir(request, id_ativo): # Agora usa id_ativo
-    ativo = get_object_or_404(Ativos, id_ativo=id_ativo) # Busca por id_ativo
+def ativos_atualizar(request, id_ativo):
+    ativo = get_object_or_404(Ativos, id_ativo=id_ativo)
+    
+    if request.method == 'POST':
+        ativo.nome = request.POST.get('nome')
+        ativo.descricao = request.POST.get('descricao')
+        ativo.id_categoria_id = request.POST.get('id_categoria')
+        ativo.codigo_ativo = request.POST.get('codigo_ativo') or 'TEMP' 
+        ativo.preco = request.POST.get('preco')
+        ativo.data_aquisicao = request.POST.get('data_aquisicao')
+        ativo.vida_util_esperada = request.POST.get('vida_util_esperada')
+        ativo.unid_vida_util = request.POST.get('unid_vida_util') or 'anos'
+        ativo.depreciacao_anual = request.POST.get('depreciacao_anual') or 0.0 
+        ativo.localizacao = request.POST.get('localizacao')
+        
+        ativo.save()
+        messages.success(request, 'Ativo atualizado com sucesso!')
+        
+    return redirect('ativos')
+
+@require_POST
+def ativos_excluir(request, id_ativo):
+    # 1. VERIFICAÇÃO DE PERMISSÃO DE ADMINISTRADOR
+    if not request.user.is_staff:
+        messages.error(request, 'Acesso negado. Apenas administradores podem excluir ativos.')
+        return redirect('ativos')
+        
+    # 2. LÓGICA DE EXCLUSÃO
+    ativo = get_object_or_404(Ativos, id_ativo=id_ativo)
     ativo.delete()
     messages.success(request, 'Ativo excluído com sucesso!')
-    return redirect('ativos')

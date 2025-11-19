@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Editar Alerta - {{ alerta.id_alerta }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row align-items-center mb-4">
+        <div class="col-md-12">
+            <h1 class="page-title">Editar Alerta #{{ alerta.id_alerta }}</h1>
+            <p class="page-subtitle">Modifique as configurações do alerta para o ativo {{ alerta.id_ativo.nome }}</p>
+        </div>
+    </div>
+    
+    <div class="card p-4 shadow-sm">
+        <form method="POST" action="{% url 'alertas_atualizar' alerta.id_alerta %}" id="formEditarAlerta">
+            {% csrf_token %}
+            
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label for="id_ativo" class="form-label-custom">Ativo</label>
+                    <select class="form-select form-control-custom" id="id_ativo" name="id_ativo" required>
+                        <option value="">Selecione...</option>
+                        {% for ativo in ativos %}
+                        <option value="{{ ativo.id_ativo }}" {% if ativo.id_ativo == alerta.id_ativo.id_ativo %}selected{% endif %}>
+                            {{ ativo.nome }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="tipo_alerta" class="form-label-custom">Tipo de Alerta</label>
+                    <select class="form-select form-control-custom" id="tipo_alerta" name="tipo_alerta" required>
+                        <option value="ROI Baixo" {% if alerta.tipo_alerta == 'ROI Baixo' %}selected{% endif %}>ROI Baixo</option>
+                        <option value="Custo Alto" {% if alerta.tipo_alerta == 'Custo Alto' %}selected{% endif %}>Custo Alto</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <label for="limiar_roi" class="form-label-custom">Limiar ROI (%)</label>
+                    <input type="number" step="0.01" class="form-control form-control-custom" id="limiar_roi" name="limiar_roi" value="{{ alerta.limiar_roi|default:'0.00' }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="limiar_porcentagem" class="form-label-custom">Limiar Custo (% Preço)</label>
+                    <input type="number" step="0.01" class="form-control form-control-custom" id="limiar_porcentagem" name="limiar_porcentagem" value="{{ alerta.limiar_porcentagem|default:'0.00' }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="status_alerta" class="form-label-custom">Status</label>
+                    <select class="form-select form-control-custom" id="status_alerta" name="status_alerta" required>
+                        <option value="Ativo" {% if alerta.status_alerta == 'Ativo' %}selected{% endif %}>Ativo</option>
+                        <option value="Inativo" {% if alerta.status_alerta == 'Inativo' %}selected{% endif %}>Inativo</option>
+                        <option value="Disparado" {% if alerta.status_alerta == 'Disparado' %}selected{% endif %}>Disparado</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="text-end mt-4">
+                <a href="{% url 'alertas_view' %}" class="btn btn-secondary me-2">Cancelar</a>
+                <button type="submit" class="btn btn-primary-custom">Salvar Alterações</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

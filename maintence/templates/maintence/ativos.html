@@ -4,93 +4,106 @@
 {% block title %}Gestão de Ativos{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        <h1 class="mb-4">Gestão de Ativos</h1>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="page-title mb-4">Gestão de Ativos</h1>
+        </div>
     </div>
-</div>
-
-<!-- Barra de Busca e Botão de Novo Ativo -->
-<div class="row mb-4 align-items-center">
-    <div class="col-md-8">
-        <div class="input-group">
-            <input type="text" class="form-control" placeholder="Buscar ativo por nome, ID ou categoria..." aria-label="Buscar ativo" id="searchInput" style="border-radius: 15px 0 0 15px;">
-            <button class="btn btn-primary" type="button" id="search-button" style="border-radius: 0 15px 15px 0;">
-                <!-- CORREÇÃO APLICADA AQUI -->
-                <img src="{% static 'maintence/img/I21-51;54616-25440.svg' %}" alt="Buscar" height="20">
+    
+    <!-- Barra de Busca e Botão de Novo Ativo -->
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-8">
+            <div class="input-group shadow-sm">
+                <input type="text" class="form-control form-control-custom" placeholder="Buscar ativo por nome, ID ou categoria..." aria-label="Buscar ativo" id="searchInput" style="border-radius: 0.5rem 0 0 0.5rem; border-right: none;">
+                <button class="btn btn-primary-custom" type="button" id="search-button" style="border-radius: 0 0.5rem 0.5rem 0;">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+        <div class="col-md-4 text-end">
+            <button class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#modalNovoAtivo">
+                <i class="fas fa-plus"></i> Novo Ativo
             </button>
         </div>
     </div>
-    <div class="col-md-4 text-end">
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNovoAtivo">
-            + Novo Ativo
-        </button>
-    </div>
-</div>
-
-<!-- Tabela de Ativos (Estrutura Simplificada) -->
-<div class="card p-3">
-    <div class="table-responsive">
-        <table class="table table-hover align-middle">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nome do Ativo</th>
-                    <th>Categoria</th>
-                    <th>Valor de Compra</th>
-                    <th>Status</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for ativo in ativos %}
-                <tr class="ativo-item" data-nome="{{ ativo.nome|lower }}" data-categoria="{{ ativo.categoria.nome|lower }}" data-localizacao="{{ ativo.localizacao|lower }}">
-                    <td>{{ ativo.id }}</td>
-                    <td>{{ ativo.nome }}</td>
-                    <td>{{ ativo.categoria.nome }}</td>
-                    <td>R$ {{ ativo.valor_compra|floatformat:2 }}</td>
-                    <td>
-                        {% if ativo.status == 'Ativo' %}
-                            <span class="badge badge-status-ativo">Ativo</span>
-                        {% else %}
-                            <span class="badge bg-secondary rounded-pill">Inativo</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-secondary">Ver</button>
-                        <button class="btn btn-sm btn-outline-danger">Excluir</button>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="6" class="text-center">Nenhum ativo cadastrado.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    
+    <!-- Tabela de Ativos -->
+    <div class="card p-4 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover table-custom align-middle">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome do Ativo</th>
+                        <th>Categoria</th>
+                        <th>Valor de Compra</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ativo in ativos %}
+                    <tr class="ativo-item" data-nome="{{ ativo.nome|lower }}" data-categoria="{{ ativo.id_categoria.nome_categoria|lower }}" data-localizacao="{{ ativo.localizacao|lower }}">
+                        <td>{{ ativo.id_ativo }}</td>
+                        <td>{{ ativo.nome }}</td>
+                        <td>{{ ativo.id_categoria.nome_categoria }}</td>
+                        <td>R$ {{ ativo.preco|floatformat:2 }}</td>
+                        <td>
+                            {% if ativo.status == 'Ativo' %}
+                                <span class="badge badge-status ativo">Ativo</span>
+                            {% else %}
+                                <span class="badge badge-status inativo">Inativo</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <!-- Botão Ver/Editar (Assumindo que você terá uma rota de edição) -->
+                            <button class="btn btn-sm btn-action me-1" onclick="window.location.href='{% url 'ativos_editar' ativo.id_ativo %}'">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            
+                            <!-- Botão Excluir (Apenas para Administradores) -->
+                            {% if request.user.is_staff %}
+                            <form method="POST" action="{% url 'ativos_excluir' ativo.id_ativo %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-action" style="background-color: var(--cor-erro);" onclick="return confirm('Tem certeza que deseja excluir o ativo {{ ativo.nome }}?');">
+                                    <i class="fas fa-trash-alt"></i> Excluir
+                                </button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">Nenhum ativo cadastrado.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 <!-- Modal Novo Ativo  -->
-<div class="modal fade modal-custom" id="modalNovoAtivo" tabindex="-1" aria-labelledby="modalNovoAtivoLabel" aria-hidden="true">
+<div class="modal fade" id="modalNovoAtivo" tabindex="-1" aria-labelledby="modalNovoAtivoLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <div class="modal-header modal-header-custom">
-                <h5 class="modal-title modal-title-custom" id="modalNovoAtivoLabel">Novo Ativo</h5>
+        <div class="modal-content card">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="modalNovoAtivoLabel">Novo Ativo</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body modal-body-custom">
+            <div class="modal-body">
                 <form method="POST" action="{% url 'ativos_criar' %}" id="formNovoAtivo">
                     {% csrf_token %}
                     
-                    <div class="row mb-3">
+                    <div class="row g-3 mb-3">
                         <div class="col-md-7">
                             <label for="nome" class="form-label-custom">Nome do ativo</label>
                             <input type="text" class="form-control form-control-custom" id="nome" name="nome" required>
                         </div>
                         <div class="col-md-5">
                             <label for="id_categoria" class="form-label-custom">Categoria</label>
-                            <select class="form-control form-control-custom" id="id_categoria" name="id_categoria" required>
+                            <select class="form-select form-control-custom" id="id_categoria" name="id_categoria" required>
                                 <option value="">Selecione...</option>
                                 {% for categoria in categorias %}
                                 <option value="{{ categoria.id_categoria }}">{{ categoria.nome_categoria }}</option>
@@ -99,7 +112,7 @@
                         </div>
                     </div>
                     
-                    <div class="row mb-3">
+                    <div class="row g-3 mb-3">
                         <div class="col-md-6">
                             <label for="data_aquisicao" class="form-label-custom">Data Aquisição</label>
                             <input type="date" class="form-control form-control-custom" id="data_aquisicao" name="data_aquisicao" required>
@@ -110,7 +123,7 @@
                         </div>
                     </div>
                     
-                    <div class="row mb-3">
+                    <div class="row g-3 mb-3">
                         <div class="col-md-6">
                             <label for="preco" class="form-label-custom">Custo da Aquisição (R$)</label>
                             <input type="number" step="0.01" class="form-control form-control-custom" id="preco" name="preco" required>
@@ -132,8 +145,8 @@
                     </div>
                     
                     <div class="text-end mt-4">
-                        <button type="button" class="btn-cancel me-2" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn-save">Salvar</button>
+                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary-custom">Salvar</button>
                     </div>
                 </form>
             </div>

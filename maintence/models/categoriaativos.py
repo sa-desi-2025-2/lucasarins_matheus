@@ -13,4 +13,4 @@ class Categoriaativos(models.Model):
         managed = False
         db_table = 'categoriaativos'
         verbose_name = 'Categoria de Ativo'
-        
+         

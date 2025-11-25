@@ -1,5 +1,3 @@
-# /maintence/urls_web.py (novo)
-
 from django.urls import path
 from .views import auth, dashboard, ativos, manutencao, analise_roi, alertas_view, cadastro
 
@@ -8,10 +6,9 @@ urlpatterns = [
     path('login/', auth.login_view, name='login'),
     path('logout/', auth.logout_view, name='logout'),
     path('cadastro/', cadastro.cadastro_view, name='cadastro'),
-     # Atualizar view existente
+   
 
     # Páginas
-    
     path('ativos/excluir/<int:id_ativo>/', ativos.ativos_excluir, name='ativos_excluir'),
     path('', dashboard.dashboard_view, name='dashboard'),
     path('ativos/', ativos.ativos_view, name='ativos'),

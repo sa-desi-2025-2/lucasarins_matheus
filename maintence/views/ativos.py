@@ -1,5 +1,5 @@
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.decorators import api_view, permission_classes  # ✅ IMPORT
+from rest_framework.decorators import api_view, permission_classes  
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from maintence.models.ativos import Ativos
@@ -8,10 +8,10 @@ from django.db.models import Sum, Avg
 from maintence.serializers.ativos import AtivosSerializer
 from django.views.decorators.http import require_POST
 from django.shortcuts import get_object_or_404
-from django.contrib import messages # Para mensagens de sucesso/erro
+from django.contrib import messages 
 
 from django.shortcuts import render, redirect
-from maintence.models import Ativos, Categoriaativos, Reparos # Importação de Reparos 
+from maintence.models import Ativos, Categoriaativos, Reparos 
 
 class AtivosViewSet(ModelViewSet):
     queryset = Ativos.objects.all()
@@ -49,13 +49,12 @@ def ativos_criar(request):
         descricao = request.POST.get('descricao')
         id_categoria_id = request.POST.get('id_categoria')
         
-        # Corrigido para garantir que 'codigo_ativo' receba uma string (TEMP)
+        
         codigo_ativo = request.POST.get('codigo_ativo') or 'TEMP' 
         preco = request.POST.get('preco')
         data_aquisicao = request.POST.get('data_aquisicao')
         vida_util_esperada = request.POST.get('vida_util_esperada')
         unid_vida_util = request.POST.get('unid_vida_util')
-        # Corrigido para garantir que 'depreciacao_anual' receba um valor numérico
         depreciacao_anual = request.POST.get('depreciacao_anual') or 0.0 
         localizacao = request.POST.get('localizacao')
         
@@ -64,7 +63,7 @@ def ativos_criar(request):
                 nome=nome,
                 descricao=descricao,
                 id_categoria_id=id_categoria_id,
-                codigo_ativo=codigo_ativo, # Agora é 'TEMP' se estiver vazio
+                codigo_ativo=codigo_ativo, 
                 preco=preco,
                 data_aquisicao=data_aquisicao,
                 vida_util_esperada=vida_util_esperada,
@@ -108,12 +107,11 @@ def ativos_atualizar(request, id_ativo):
 
 @require_POST
 def ativos_excluir(request, id_ativo):
-    # 1. VERIFICAÇÃO DE PERMISSÃO DE ADMINISTRADOR
+     #VERIFICAÇÃO DE PERMISSÃO DE ADMINISTRADOR
     if not request.user.is_staff:
         messages.error(request, 'Acesso negado. Apenas administradores podem excluir ativos.')
         return redirect('ativos')
         
-    # 2. LÓGICA DE EXCLUSÃO
     ativo = get_object_or_404(Ativos, id_ativo=id_ativo)
     ativo.delete()
     messages.success(request, 'Ativo excluído com sucesso!')

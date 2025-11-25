@@ -15,7 +15,7 @@ class Reparos(models.Model):
     extensao_vida_util = models.IntegerField()
     unid_extensao_vida_util = models.CharField(max_length=20)
     id_usuario = models.ForeignKey('Usuarios', db_column='id_usuario', on_delete=models.CASCADE, null=True, blank=True)
-    roi_calculado = models.DecimalField(max_digits=10, decimal_places=2)
+    roi_calculado = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     custo_total_peca = models.DecimalField(max_digits=12, decimal_places=2)
     anexos = models.CharField(max_length=255, blank=True, null=True)
     custo_mao_obra = models.DecimalField(max_digits=12, decimal_places=2)
@@ -27,36 +27,38 @@ class Reparos(models.Model):
 
     
     def custo_total(self):
-        return (self.custo_total_peca or Decimal('0.00')) + (self.custo_mao_obra or Decimal('0.00'))
+        try:
+            peca = Decimal(str(self.custo_total_peca)) if self.custo_total_peca else Decimal('0.00')
+            mao = Decimal(str(self.custo_mao_obra)) if self.custo_mao_obra else Decimal('0.00')
+            return peca + mao
+        except Exception as e:
+            print("ERRO AO CALCULAR CUSTO TOTAL:", e, self.custo_total_peca, self.custo_mao_obra)
+            return Decimal('0.00')
 
     
     def calcular_roi(self, conservador_extensao_pct=0.10):
-        """
-        ROI (%) = ((Ganho estimado - Custo) / Custo) * 100
-        Corrige proporções incoerentes entre vida útil e extensão.
-        """
         try:
             ativo = self.id_ativo
             valor = Decimal(ativo.preco or 0)
             vida = Decimal(ativo.vida_util_esperada or 1)
             extensao = Decimal(self.extensao_vida_util or 0)
-            custo = self.custo_total()
+            custo = self.custo_total()  
 
-            if custo == 0:
-                return None
+            if custo <= 0:
+                raise ValueError("O custo deve ser maior que zero")
 
-            # Normaliza extensao (não pode ser maior que a vida)
+           
             if extensao > vida:
                 extensao = vida * Decimal(conservador_extensao_pct)
 
-            # Evita divisão por zero
             if vida <= 0:
                 vida = Decimal(1)
 
             ganho_estimado = (valor / vida) * extensao
 
             roi = ((ganho_estimado - custo) / custo) * 100
-            return roi.quantize(Decimal('0.01'))
+
+            return roi.quantize(Decimal("0.01"))
 
         except Exception as e:
             print("Erro no cálculo do ROI:", e)
@@ -64,16 +66,17 @@ class Reparos(models.Model):
 
 
     def save(self, *args, **kwargs):
-        # Valida que todo reparo deve ter custo total (peça + mão de obra)
-        if (self.custo_total_peca is None or self.custo_total_peca == 0) and \
-           (self.custo_mao_obra is None or self.custo_mao_obra == 0):
-            raise ValueError("RN001: Reparo deve ter custo total (peças e/ou mão de obra).")
-
-     
+        custo = self.custo_total()
+    
+        if custo <= 0:
+            raise ValueError("RN001: Reparo deve ter custo total válido.")
+    
         roi = self.calcular_roi()
-        self.roi_calculado = roi
-
+        self.roi_calculado = roi if roi is not None else Decimal("0.00")
+    
         super().save(*args, **kwargs)
+
+
 
 
     def __str__(self):

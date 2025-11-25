@@ -1,16 +1,13 @@
-from django.shortcuts import render # <--- CORREÇÃO APLICADA
+from django.shortcuts import render
 from maintence.models import Ativos, Reparos, Alertas
-from django.db.models import Sum, Avg, DecimalField, Value # Importações necessárias
+from django.db.models import Sum, Avg, DecimalField, Value
 from django.db.models.functions import Coalesce
 
 def dashboard_view(request):
-    # Dados para o dashboard (agora reais do banco de dados)
     total_ativos = Ativos.objects.count()
     total_reparos = Reparos.objects.count()
     
-    # 1. CORREÇÃO: Usando Value e DecimalField para evitar o erro de tipos mistos
     
-    # Corrigindo o custo total
     custo_total = Reparos.objects.aggregate(
         total=Coalesce(
             Sum('custo_total_peca'), 
@@ -18,7 +15,6 @@ def dashboard_view(request):
         )
     )['total']
     
-    # Corrigindo o ROI médio
     roi_medio = Reparos.objects.aggregate(
         avg_roi=Coalesce(
             Avg('roi_calculado'), 
@@ -29,7 +25,6 @@ def dashboard_view(request):
     ultimos_reparos = Reparos.objects.order_by('-data_reparo')[:5]
     alertas_recentes = Alertas.objects.order_by('-data_criacao')[:5]
     
-    # 2. CORREÇÃO: Aplicando a mesma correção para a agregação de gastos por ativo
     ativos_gastos_query = Ativos.objects.annotate(
         total_gasto=Coalesce(
             Sum('reparos__custo_total_peca'), 
@@ -38,10 +33,10 @@ def dashboard_view(request):
     ).order_by('-total_gasto')[:5]
     
     ativos_labels = [a.nome for a in ativos_gastos_query]
-    # Certifique-se de converter para float apenas se o template exigir
+
     ativos_gastos = [float(a.total_gasto) for a in ativos_gastos_query]
     
-    # Dados para ROI por Ativo (para o gráfico) - AGORA REAL DO BANCO
+
     ativos_roi_query = Ativos.objects.annotate(
         roi_medio=Coalesce(
             Avg('reparos__roi_calculado'), 

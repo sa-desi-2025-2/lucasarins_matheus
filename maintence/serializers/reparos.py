@@ -4,7 +4,7 @@ from maintence.models.reparos import Reparos
 
 
 class ReparosSerializer(ModelSerializer):
-    roi_calculado = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+    roi_calculado = serializers.SerializerMethodField()
     custo_total = serializers.SerializerMethodField()
 
     class Meta:

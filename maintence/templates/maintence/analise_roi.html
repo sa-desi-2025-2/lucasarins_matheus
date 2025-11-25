@@ -1,288 +1,226 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Análise ROI - ROIMANUTENCE{% endblock %}
+{% block title %}ROI dos Ativos{% endblock %}
 
 {% block extra_css %}
 <style>
-    /* Estilos customizados para Análise ROI (Mínimo) */
+    .page-header {
+        margin-bottom: 30px;
+    }
+
     .page-title {
-        font-size: 2rem;
+        font-size: 32px;
         font-weight: 700;
-        color: var(--cor-primaria);
+        color: #333;
+        margin-bottom: 10px;
     }
-    
-    .page-subtitle {
-        font-size: 1.25rem;
-        font-weight: 400;
-        color: var(--cor-secundaria);
+
+    .roi-card {
+        background: #ffffff;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
     }
-    
-    .roi-card-title {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--cor-primaria);
-        margin-bottom: 1.5rem;
+
+    /* ---------------------- */
+    /* FILTROS                */
+    /* ---------------------- */
+    .filtros-card {
+        background: #fff;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        margin-bottom: 25px;
     }
-    
-    .ativo-roi-item {
-        background-color: var(--cor-fundo);
-        border-radius: 0.5rem;
-        padding: 1.25rem;
-        margin-bottom: 1rem;
+
+    .filtros-card label {
+        font-weight: 600;
+        color: #555;
     }
-    
-    .ativo-roi-name {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: var(--cor-primaria);
+
+    .filtros-card select {
+        width: 100%;
+        padding: 10px 14px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        font-size: 15px;
+        background: #fff;
     }
-    
-    .ativo-roi-value {
-        font-size: 1.75rem;
-        font-weight: 700;
+
+    /* ---------------------- */
+    /* BOTÃO PRETO            */
+    /* ---------------------- */
+    .btn-primary {
+        background-color: #000 !important;
+        border-color: #000 !important;
+        color: #fff !important;
+        font-weight: 600;
+        padding: 10px 18px;
+        border-radius: 8px;
+        transition: 0.2s;
     }
-    
-    .roi-detail-label {
-        font-size: 0.875rem;
-        color: var(--cor-secundaria);
-        margin-bottom: 0.25rem;
+
+    .btn-primary:hover {
+        background-color: #333 !important;
+        border-color: #333 !important;
     }
-    
-    .roi-detail-value {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: var(--cor-primaria);
+
+    /* ---------------------- */
+    /* TABELA                 */
+    /* ---------------------- */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
     }
-    
-    .progress-bar-custom {
-        height: 0.5rem;
-        border-radius: 0.25rem;
-        background-color: #e5e7eb;
-        margin-top: 0.75rem;
+
+    table th {
+        background: #000;
+        color: #fff;
+        padding: 12px;
+        font-size: 15px;
+        border-radius: 5px 5px 0 0;
     }
-    
-    .progress-fill {
-        height: 100%;
-        border-radius: 0.25rem;
-        transition: width 0.3s;
+
+    table td {
+        padding: 12px;
+        background: #f8f9fa;
+        border-bottom: 1px solid #e3e3e3;
+        font-size: 14px;
     }
-    
-    .progress-positive {
-        background-color: var(--cor-sucesso);
+
+    /* ROI cores */
+    .roi-positive {
+        color: #28a745;
+        font-weight: bold;
     }
-    
-    .progress-negative {
-        background-color: var(--cor-erro);
+
+    .roi-negative {
+        color: #dc3545;
+        font-weight: bold;
     }
+
+    .roi-zero {
+        color: #6c757d;
+        font-weight: bold;
+    }
+
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <h1 class="page-title">Análise ROI</h1>
-    <p class="page-subtitle">Analise o retorno sobre investimento dos seus ativos e reparos</p>
-    
-    <!-- Filtros -->
-    <div class="card p-4 mb-4 shadow-sm">
+
+<div class="page-header">
+    <h1 class="page-title">ROI dos Ativos</h1>
+</div>
+
+<!-- ----------------------------- -->
+<!--         FILTROS              -->
+<!-- ----------------------------- -->
+<div class="filtros-card">
+
+    <form method="GET">
         <div class="row g-3">
+
+            <!-- Período -->
             <div class="col-md-4">
-                <label class="form-label-custom">Período</label>
-                <select class="form-select form-control-custom" id="filterPeriodo">
-                    <option value="30">Últimos 30 dias</option>
-                    <option value="90">Últimos 90 dias</option>
-                    <option value="180">Últimos 6 meses</option>
-                    <option value="365" selected>Último ano</option>
-                    <option value="all">Todo período</option>
+                <label>Período</label>
+                <select name="periodo">
+                    <option value="">Todo período</option>
+                    <option value="30" {% if request.GET.periodo == "30" %}selected{% endif %}>Últimos 30 dias</option>
+                    <option value="90" {% if request.GET.periodo == "90" %}selected{% endif %}>Últimos 90 dias</option>
+                    <option value="180" {% if request.GET.periodo == "180" %}selected{% endif %}>Últimos 6 meses</option>
+                    <option value="365" {% if request.GET.periodo == "365" %}selected{% endif %}>Último ano</option>
                 </select>
             </div>
+
+            <!-- Categoria -->
             <div class="col-md-4">
-                <label class="form-label-custom">Categoria</label>
-                <select class="form-select form-control-custom" id="filterCategoria">
-                    <option value="">Todas as categorias</option>
-                    {% for categoria in categorias %}
-                    <option value="{{ categoria.id_categoria }}">{{ categoria.nome_categoria }}</option>
+                <label>Categoria</label>
+                <select name="categoria">
+                    <option value="">Todas</option>
+                    {% for c in categorias %}
+                        <option value="{{ c.id_categoria }}"
+                        {% if request.GET.categoria == c.id_categoria|stringformat:"s" %}selected{% endif %}>
+                            {{ c.nome_categoria }}
+                        </option>
                     {% endfor %}
                 </select>
             </div>
+
+            <!-- Ordenação -->
             <div class="col-md-4">
-                <label class="form-label-custom">Ordenar por</label>
-                <select class="form-select form-control-custom" id="filterOrdenacao">
-                    <option value="roi_desc">Maior ROI</option>
-                    <option value="roi_asc">Menor ROI</option>
-                    <option value="custo_desc">Maior Custo</option>
-                    <option value="nome">Nome</option>
+                <label>Ordenar por</label>
+                <select name="ordenacao">
+                    <option value="roi_desc" {% if request.GET.ordenacao == "roi_desc" %}selected{% endif %}>Maior ROI</option>
+                    <option value="roi_asc" {% if request.GET.ordenacao == "roi_asc" %}selected{% endif %}>Menor ROI</option>
+                    <option value="custo_desc" {% if request.GET.ordenacao == "custo_desc" %}selected{% endif %}>Maior Custo</option>
+                    <option value="nome" {% if request.GET.ordenacao == "nome" %}selected{% endif %}>Nome</option>
                 </select>
             </div>
-        </div>
-    </div>
-    
-    <!-- ROI Geral -->
-    <div class="row g-4 mb-4">
-        <div class="col-md-4">
-            <div class="card p-4 text-center shadow-sm">
-                <div class="text-muted mb-2">ROI Médio Geral</div>
-                <div class="stats-value {% if roi_medio >= 0 %}roi-positive{% else %}roi-negative{% endif %}">
-                    {{ roi_medio|floatformat:2 }}%
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card p-4 text-center shadow-sm">
-                <div class="text-muted mb-2">Investimento Total</div>
-                <div class="stats-value">R${{ investimento_total|floatformat:2 }}</div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card p-4 text-center shadow-sm">
-                <div class="text-muted mb-2">Retorno Estimado</div>
-                <div class="stats-value roi-positive">R${{ retorno_estimado|floatformat:2 }}</div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- ROI por Ativo -->
-    <div class="card p-4 mb-4 shadow-sm">
-        <h3 class="roi-card-title">ROI por Ativo</h3>
-        
-        {% for ativo_roi in ativos_roi %}
-        <div class="ativo-roi-item">
-            <div class="ativo-roi-header d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="ativo-roi-name">{{ ativo_roi.nome }}</div>
-                    <div class="text-secondary">{{ ativo_roi.categoria }}</div>
-                </div>
-                <div class="ativo-roi-value {% if ativo_roi.roi >= 0 %}roi-positive{% else %}roi-negative{% endif %}">
-                    {{ ativo_roi.roi|floatformat:2 }}%
-                </div>
-            </div>
-            
-            <div class="row roi-details mt-3">
-                <div class="col-3 roi-detail-item">
-                    <div class="roi-detail-label">Valor Inicial</div>
-                    <div class="roi-detail-value">R${{ ativo_roi.valor_inicial|floatformat:2 }}</div>
-                </div>
-                <div class="col-3 roi-detail-item">
-                    <div class="roi-detail-label">Total Investido</div>
-                    <div class="roi-detail-value">R${{ ativo_roi.total_investido|floatformat:2 }}</div>
-                </div>
-                <div class="col-3 roi-detail-item">
-                    <div class="roi-detail-label">Valor Atual</div>
-                    <div class="roi-detail-value">R${{ ativo_roi.valor_atual|floatformat:2 }}</div>
-                </div>
-                <div class="col-3 roi-detail-item">
-                    <div class="roi-detail-label">Nº Reparos</div>
-                    <div class="roi-detail-value">{{ ativo_roi.num_reparos }}</div>
-                </div>
-            </div>
-            
-            <div class="progress-bar-custom">
-                <div class="progress-fill {% if ativo_roi.roi >= 0 %}progress-positive{% else %}progress-negative{% endif %}" 
-                     style="width: {{ ativo_roi.roi_percent }}%"></div>
-            </div>
-        </div>
-        {% empty %}
-        <div class="alert alert-info">
-            Nenhum dado disponível para análise de ROI no momento.
-        </div>
-        {% endfor %}
-    </div>
-    
-    <!-- Gráfico de Evolução do ROI -->
-    <div class="card p-4 mb-4 shadow-sm">
-        <h3 class="roi-card-title">Evolução do ROI ao Longo do Tempo</h3>
-        <canvas id="chartEvolucaoROI"></canvas>
-    </div>
-    
-    <!-- Comparação de ROI por Categoria -->
-    <div class="card p-4 mb-4 shadow-sm">
-        <h3 class="roi-card-title">ROI Médio por Categoria</h3>
-        <canvas id="chartROICategoria"></canvas>
-    </div>
-</div>
-{% endblock %}
 
-{% block extra_js %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+        </div>
+
+        <button class="btn btn-primary mt-3" type="submit">Aplicar Filtros</button>
+    </form>
+
+</div>
+
+<!-- ----------------------------- -->
+<!--      TABELA ROI              -->
+<!-- ----------------------------- -->
+<div class="roi-card">
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Ativo</th>
+                <th>Valor Inicial</th>
+                <th>Valor Atual</th>
+                <th>Total Reparos</th>
+                <th>ROI (%)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in ativos %}
+            <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.nome }}</td>
+                <td>R$ {{ item.valor_inicial }}</td>
+                <td>R$ {{ item.valor_atual }}</td>
+                <td>R$ {{ item.custo_total_reparos }}</td>
+
+                <td>
+                    {% if item.roi_percentual > 0 %}
+                        <span class="roi-positive">{{ item.roi_percentual }}%</span>
+                    {% elif item.roi_percentual < 0 %}
+                        <span class="roi-negative">{{ item.roi_percentual }}%</span>
+                    {% else %}
+                        <span class="roi-zero">0%</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 <script>
-    // Gráfico de Evolução do ROI
-    const ctxEvolucao = document.getElementById('chartEvolucaoROI');
-    if (ctxEvolucao) {
-        new Chart(ctxEvolucao, {
-            type: 'line',
-            data: {
-                labels: {{ evolucao_labels|safe }},
-                datasets: [{
-                    label: 'ROI (%)',
-                    data: {{ evolucao_valores|safe }},
-                    borderColor: 'var(--cor-primaria)',
-                    backgroundColor: 'rgba(0, 0, 0, 0.1)',
-                    tension: 0.4,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: true
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    }
-    
-    // Gráfico de ROI por Categoria
-    const ctxCategoria = document.getElementById('chartROICategoria');
-    if (ctxCategoria) {
-        new Chart(ctxCategoria, {
-            type: 'bar',
-            data: {
-                labels: {{ categoria_labels|safe }},
-                datasets: [{
-                    label: 'ROI Médio (%)',
-                    data: {{ categoria_roi|safe }},
-                    backgroundColor: 'var(--cor-primaria)',
-                    borderRadius: 5
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    }
-    
-    // Aplicar filtros
-    document.getElementById('filterPeriodo').addEventListener('change', aplicarFiltros);
-    document.getElementById('filterCategoria').addEventListener('change', aplicarFiltros);
-    document.getElementById('filterOrdenacao').addEventListener('change', aplicarFiltros);
-    
-    function aplicarFiltros() {
-        const periodo = document.getElementById('filterPeriodo').value;
-        const categoria = document.getElementById('filterCategoria').value;
-        const ordenacao = document.getElementById('filterOrdenacao').value;
-        
-        let url = '{% url "analise_roi" %}?';
-        if (periodo) url += `periodo=${periodo}&`;
-        if (categoria) url += `categoria=${categoria}&`;
-        if (ordenacao) url += `ordenacao=${ordenacao}`;
-        
-        window.location.href = url;
-    }
+document.addEventListener("DOMContentLoaded", function () {
+
+    // Seletores dos filtros
+    const periodoSelect = document.querySelector("select[name='periodo']");
+    const categoriaSelect = document.querySelector("select[name='categoria']");
+    const ordenacaoSelect = document.querySelector("select[name='ordenacao']");
+    const form = document.querySelector("form");
+
+    // Auto-submit ao alterar qualquer filtro
+    periodoSelect.addEventListener("change", () => form.submit());
+    categoriaSelect.addEventListener("change", () => form.submit());
+    ordenacaoSelect.addEventListener("change", () => form.submit());
+
+});
 </script>
+
 {% endblock %}

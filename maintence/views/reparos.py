@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, render, redirect 
 from django.contrib.auth.hashers import make_password
 from rest_framework.permissions import IsAuthenticated
-from maintence.models import Reparos, Ativos # Importa os models necessários
+from maintence.models import Reparos, Ativos
 from maintence.serializers.reparos import ReparosSerializer
 from django.db.models import Sum, Avg, Count
 from rest_framework.response import Response
@@ -103,7 +103,6 @@ def exportar_reparos_pdf(request):
             serializer.save()
             
 def manutencao_view(request):
-    # Certifique-se de que os models Reparos e Ativos estão importados corretamente
     reparos = Reparos.objects.select_related('id_ativo').all()
     ativos = Ativos.objects.all()
     context = {

@@ -41,7 +41,7 @@ def alertas_criar(request ):
                 limiar_roi=limiar_roi,
               
                 mensagem=mensagem,
-                status_alerta='Ativo' # Assumindo que o status inicial é Ativo
+                status_alerta='Ativo' 
             )
             messages.success(request, 'Alerta criado com sucesso!')
         else:

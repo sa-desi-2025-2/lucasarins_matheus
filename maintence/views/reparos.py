@@ -111,7 +111,7 @@ def manutencao_view(request):
     }
     return render(request, 'maintence/manutencao.html', context)
 
-# Adicione a view de criação de reparos
+
 def reparos_criar(request):
     if request.method == 'POST':
         id_ativo = request.POST.get("id_ativo")
